@@ -1,9 +1,8 @@
 package com.nomaddeveloper.securai.helper;
 
-import android.util.Log;
-
-import com.nomaddeveloper.securai.Field;
 import com.nomaddeveloper.securai.annotation.Secured;
+import com.nomaddeveloper.securai.logger.SecuraiLogger;
+import com.nomaddeveloper.securai.model.Field;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -22,6 +21,10 @@ import okio.Buffer;
 import okio.GzipSource;
 import retrofit2.Invocation;
 
+/**
+ * Helper class for intercepting and analyzing HTTP requests based on the {@link Secured} annotation.
+ * This class provides methods to extract secured fields, their values, and handle various request body encoding scenarios.
+ */
 public class InterceptorHelper {
 
     private static final String TAG = InterceptorHelper.class.getCanonicalName();
@@ -55,7 +58,7 @@ public class InterceptorHelper {
         try {
             return EnumSet.copyOf(Arrays.asList(fields));
         } catch (IllegalArgumentException e) {
-            Log.w(TAG, "Invalid Field values in @Secured: " + Arrays.toString(fields) + ", defaulting to ALL", e);
+            SecuraiLogger.warn(TAG, "Invalid Field values in @Secured: " + Arrays.toString(fields) + ", defaulting to ALL");
             return EnumSet.of(Field.ALL);
         }
     }
@@ -84,7 +87,7 @@ public class InterceptorHelper {
                     }
 
                     if (requestBody.isDuplex() || requestBody.isOneShot()) {
-                        fieldValues.put(Field.BODY, "[Duplex or one-shot body not extracted]");
+                        fieldValues.put(Field.BODY, null);
                         break;
                     }
 
@@ -92,7 +95,6 @@ public class InterceptorHelper {
                         Buffer buffer = new Buffer();
                         requestBody.writeTo(buffer);
 
-                        // Handle gzip compression
                         if ("gzip".equalsIgnoreCase(request.header("Content-Encoding"))) {
                             try (GzipSource gzipSource = new GzipSource(buffer)) {
                                 Buffer unzippedBuffer = new Buffer();
@@ -107,11 +109,11 @@ public class InterceptorHelper {
                         if (isProbablyUtf8(buffer)) {
                             fieldValues.put(Field.BODY, buffer.readString(charset));
                         } else {
-                            fieldValues.put(Field.BODY, "[Binary body, " + requestBody.contentLength() + "-byte]");
+                            fieldValues.put(Field.BODY, null);
                         }
                     } catch (IOException e) {
-                        Log.w(TAG, "Failed to extract request body", e);
-                        fieldValues.put(Field.BODY, "[Error extracting body: " + e.getMessage() + "]");
+                        SecuraiLogger.error(TAG, "Failed to extract request body: ", e);
+                        fieldValues.put(Field.BODY, null);
                     }
                     break;
 
@@ -129,7 +131,7 @@ public class InterceptorHelper {
                     break;
 
                 default:
-                    Log.w(TAG, "Unknown field type: " + field);
+                    SecuraiLogger.warn(TAG, "Unknown field type: " + field);
                     break;
             }
         }

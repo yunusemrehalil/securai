@@ -35,6 +35,8 @@ dependencies {
 
     implementation(libs.appcompat)
     implementation(libs.material)
+    //MediaPipe
+    implementation(libs.tasks.text)
     //OkHttp v Retrofit
     implementation(libs.okhttp)
     implementation(libs.retrofit)

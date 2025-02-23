@@ -20,7 +20,7 @@ public class TestRequest {
         String userId = "user123";
 
         Call<PostResponse> call = service.submitData(request, authToken, userId);
-        call.enqueue(new Callback<PostResponse>() {
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<PostResponse> call, @NonNull Response<PostResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {

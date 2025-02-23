@@ -1,5 +1,7 @@
 package com.nomaddeveloper.securai.network.retrofit;
 
+import static com.nomaddeveloper.securai.SecuraiApp.getAppContext;
+
 import com.nomaddeveloper.securai.SecuraiInterceptor;
 import com.nomaddeveloper.securai.service.TestService;
 
@@ -11,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitBuilder {
     private static Retrofit getRetrofit() {
         OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new SecuraiInterceptor())
+                .addInterceptor(new SecuraiInterceptor(getAppContext(), true))
                 .addInterceptor(new HttpLoggingInterceptor())
                 .build();
 

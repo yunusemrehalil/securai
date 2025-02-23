@@ -1,7 +1,7 @@
 package com.nomaddeveloper.securai.service;
 
-import com.nomaddeveloper.securai.Field;
 import com.nomaddeveloper.securai.annotation.Secured;
+import com.nomaddeveloper.securai.model.Field;
 import com.nomaddeveloper.securai.network.model.PostRequest;
 import com.nomaddeveloper.securai.network.model.PostResponse;
 
