@@ -1,9 +1,9 @@
-package com.nomaddeveloper.securai.service;
+package com.nomaddeveloper.example.securai.service;
 
 import com.nomaddeveloper.securai.annotation.Secured;
 import com.nomaddeveloper.securai.internal.model.Field;
-import com.nomaddeveloper.securai.network.model.PostRequest;
-import com.nomaddeveloper.securai.network.model.PostResponse;
+import com.nomaddeveloper.example.securai.network.model.PostRequest;
+import com.nomaddeveloper.example.securai.network.model.PostResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

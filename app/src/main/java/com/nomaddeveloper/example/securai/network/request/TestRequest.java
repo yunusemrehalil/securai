@@ -1,11 +1,11 @@
-package com.nomaddeveloper.securai.network.request;
+package com.nomaddeveloper.example.securai.network.request;
 
 import androidx.annotation.NonNull;
 
-import com.nomaddeveloper.securai.network.model.PostRequest;
-import com.nomaddeveloper.securai.network.model.PostResponse;
-import com.nomaddeveloper.securai.network.retrofit.RetrofitBuilder;
-import com.nomaddeveloper.securai.service.TestService;
+import com.nomaddeveloper.example.securai.network.model.PostRequest;
+import com.nomaddeveloper.example.securai.network.model.PostResponse;
+import com.nomaddeveloper.example.securai.network.retrofit.RetrofitBuilder;
+import com.nomaddeveloper.example.securai.service.TestService;
 
 import retrofit2.Call;
 import retrofit2.Callback;

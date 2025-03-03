@@ -1,4 +1,4 @@
-package com.nomaddeveloper.securai;
+package com.nomaddeveloper.example.securai;
 
 import android.app.Application;
 import android.content.Context;

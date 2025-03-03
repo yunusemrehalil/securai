@@ -1,11 +1,11 @@
-package com.nomaddeveloper.securai.network.retrofit;
+package com.nomaddeveloper.example.securai.network.retrofit;
 
-import static com.nomaddeveloper.securai.SecuraiApp.getAppContext;
+import static com.nomaddeveloper.example.securai.SecuraiApp.getAppContext;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nomaddeveloper.securai.SecuraiInterceptor;
-import com.nomaddeveloper.securai.service.TestService;
+import com.nomaddeveloper.example.securai.service.TestService;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

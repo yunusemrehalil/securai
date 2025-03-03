@@ -1,4 +1,4 @@
-package com.nomaddeveloper.securai;
+package com.nomaddeveloper.example.securai;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,8 +9,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.nomaddeveloper.example.securai.databinding.ActivityMainBinding;
-import com.nomaddeveloper.securai.internal.logger.SecuraiLogger;
-import com.nomaddeveloper.securai.network.request.TestRequest;
+import com.nomaddeveloper.example.securai.network.request.TestRequest;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {

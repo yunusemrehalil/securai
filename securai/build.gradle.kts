@@ -60,8 +60,6 @@ dependencies {
     //OkHttp v Retrofit
     implementation(libs.okhttp)
     implementation(libs.retrofit)
-    //Gson
-    implementation(libs.gson)
     //Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
