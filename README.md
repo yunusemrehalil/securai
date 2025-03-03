@@ -16,6 +16,20 @@ as XSS (Cross-Site Scripting) attacks in network requests.
 - **Minimal Overhead**: Designed to integrate seamlessly with OkHttp without significant performance
   impact.
 
+## Installation
+
+To install Securai Interceptor, add the following dependency to your project's `build.gradle` file:
+
+```gradle
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation("com.github.yunusemrehalil:securai:1.0.0-beta")
+}
+```
+
 ## Usage
 
 ### 1. Add the `@Secured` Annotation
