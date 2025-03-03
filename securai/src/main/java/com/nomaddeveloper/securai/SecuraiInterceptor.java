@@ -37,8 +37,10 @@ import retrofit2.Invocation;
  * This interceptor extracts specified fields from the request and performs security checks using an XSS classifier.
  */
 public class SecuraiInterceptor implements Interceptor {
+
     private static final String TAG = SecuraiInterceptor.class.getCanonicalName();
     private static final long LATCH_TIMEOUT = 5L;
+    private static final int DEFAULT_LATCH_COUNT = 1;
     private final XSSClassifierHelper xssClassifierHelper;
     private final DeniedResponse deniedResponse;
 
@@ -71,7 +73,7 @@ public class SecuraiInterceptor implements Interceptor {
             return chain.proceed(request);
         }
 
-        CountDownLatch latch = new CountDownLatch(1);
+        CountDownLatch latch = new CountDownLatch(DEFAULT_LATCH_COUNT);
         AtomicReference<SecuraiResult> result = new AtomicReference<>(new SecuraiResult(false, INITIAL_ERROR.getMessage()));
 
         ClassifyListener listener = new ClassifyListenerImpl(latch, result);

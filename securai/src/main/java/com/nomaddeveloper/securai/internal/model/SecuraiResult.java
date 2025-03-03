@@ -9,6 +9,7 @@ import androidx.annotation.RestrictTo;
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public record SecuraiResult(boolean threatDetected, String value) {
+
     /**
      * Constructs a {@code SecuraiResult} instance.
      *

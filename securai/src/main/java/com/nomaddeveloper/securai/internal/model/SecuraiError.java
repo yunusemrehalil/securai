@@ -9,6 +9,7 @@ import com.nomaddeveloper.securai.internal.exception.SecuraiException;
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public enum SecuraiError {
+
     UNKNOWN_ERROR("Unknown classification error occurred."),
     XSS_CLASSIFIER_INIT_FAILED("Failed to initialize XSS classifier."),
     THREAD_INTERRUPTED("Thread interrupted while waiting for XSS classification."),

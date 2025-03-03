@@ -7,6 +7,7 @@ import androidx.annotation.RestrictTo;
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public enum InterceptorMessage {
+
     INITIAL_ERROR("Initial error"),
     INTERCEPTING_REQUEST("Intercepting request: "),
     SECURITY_ANALYSIS_TIMEOUT("Security analysis timeout. Proceeding request: "),

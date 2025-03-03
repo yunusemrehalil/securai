@@ -7,6 +7,7 @@ import androidx.annotation.RestrictTo;
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public enum ClassifierMessage {
+
     INITIALIZING("Initializing XSS classifier..."),
     INITIALIZED_SUCCESS("XSS classifier initialized successfully."),
     CLASSIFYING_BODY("Classifying request body..."),
