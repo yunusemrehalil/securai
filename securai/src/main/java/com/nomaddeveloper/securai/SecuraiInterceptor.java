@@ -38,9 +38,10 @@ import retrofit2.Invocation;
  */
 public class SecuraiInterceptor implements Interceptor {
 
-    private static final String TAG = SecuraiInterceptor.class.getCanonicalName();
+    private static final String TAG = SecuraiInterceptor.class.getSimpleName();
     private static final long LATCH_TIMEOUT = 5L;
     private static final int DEFAULT_LATCH_COUNT = 1;
+
     private final XSSClassifierHelper xssClassifierHelper;
     private final DeniedResponse deniedResponse;
 

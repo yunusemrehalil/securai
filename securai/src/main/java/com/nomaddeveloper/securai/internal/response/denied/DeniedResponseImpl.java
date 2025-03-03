@@ -17,7 +17,7 @@ import retrofit2.Response;
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class DeniedResponseImpl implements DeniedResponse {
 
-    private static final String TAG = DeniedResponseImpl.class.getCanonicalName();
+    private static final String TAG = DeniedResponseImpl.class.getSimpleName();
 
     /**
      * Handles requests blocked due to security vulnerabilities.

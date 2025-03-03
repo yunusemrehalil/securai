@@ -33,7 +33,7 @@ import retrofit2.Invocation;
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class InterceptorHelper {
 
-    private static final String TAG = InterceptorHelper.class.getCanonicalName();
+    private static final String TAG = InterceptorHelper.class.getSimpleName();
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     /**

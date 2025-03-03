@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class ClassifyListenerImpl implements ClassifyListener {
 
-    private static final String TAG = ClassifyListenerImpl.class.getCanonicalName();
+    private static final String TAG = ClassifyListenerImpl.class.getSimpleName();
     private static final String ERROR_PREFIX = "Error: ";
     private static final String NO_THREAT_DETECTED = "No threat detected.";
     private final CountDownLatch latch;

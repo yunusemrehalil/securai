@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class XSSClassifierHelper {
 
-    private static final String TAG = XSSClassifierHelper.class.getCanonicalName();
+    private static final String TAG = XSSClassifierHelper.class.getSimpleName();
     private static final String XSS_MODEL = "xss_model.tflite";
     private static final float XSS_SECURITY_THRESHOLD = 0.8f;
     private static final float DEFAULT_XSS_SCORE = -1f;
