@@ -1,7 +1,7 @@
 package com.nomaddeveloper.securai.annotation;
 
 import com.nomaddeveloper.securai.SecuraiInterceptor;
-import com.nomaddeveloper.securai.model.Field;
+import com.nomaddeveloper.securai.internal.model.Field;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

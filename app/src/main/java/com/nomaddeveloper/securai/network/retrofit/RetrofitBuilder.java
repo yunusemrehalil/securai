@@ -2,6 +2,8 @@ package com.nomaddeveloper.securai.network.retrofit;
 
 import static com.nomaddeveloper.securai.SecuraiApp.getAppContext;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nomaddeveloper.securai.SecuraiInterceptor;
 import com.nomaddeveloper.securai.service.TestService;
 
@@ -12,6 +14,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitBuilder {
     private static Retrofit getRetrofit() {
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new SecuraiInterceptor(getAppContext(), true))
                 .addInterceptor(new HttpLoggingInterceptor())
@@ -19,7 +23,7 @@ public class RetrofitBuilder {
 
         return new Retrofit.Builder()
                 .baseUrl("https://jsonplaceholder.typicode.com/")
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(client)
                 .build();
     }

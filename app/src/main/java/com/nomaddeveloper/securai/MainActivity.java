@@ -1,15 +1,23 @@
 package com.nomaddeveloper.securai;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.nomaddeveloper.securai.databinding.ActivityMainBinding;
+import com.nomaddeveloper.example.securai.databinding.ActivityMainBinding;
+import com.nomaddeveloper.securai.internal.logger.SecuraiLogger;
 import com.nomaddeveloper.securai.network.request.TestRequest;
 
-public class MainActivity extends AppCompatActivity {
-    private static ActivityMainBinding binding;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private ActivityMainBinding binding;
+    private Button makeRequest;
+    private TextView result;
+    private TextView request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +25,25 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         EdgeToEdge.enable(this);
         setContentView(binding.getRoot());
+        setViews();
+    }
 
-        TestRequest.mockPostRequest();
+    private void setViews() {
+        makeRequest = binding.btnRequest;
+        result = binding.tvResult;
+        request = binding.tvRequest;
+
+        makeRequest.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v != null) {
+            if (v.getId() == makeRequest.getId()) {
+                TestRequest.mockPostRequest();
+            } else if (v.getId() == result.getId()) {
+                result.setText("not secured");
+            }
+        }
     }
 }

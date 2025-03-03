@@ -15,11 +15,13 @@ public class TestRequest {
     private static final TestService service = RetrofitBuilder.createTestService();
 
     public static void mockPostRequest() {
-        PostRequest request = new PostRequest("Test Title", "This is a mock body", 1);
+        PostRequest request = new PostRequest("Test Title", "<script>alert('XSS')</script>", 1);
         String authToken = "Bearer 12345";
+        String cookie = "Cookie 123";
         String userId = "user123";
+        String userId2 = "testUser";
 
-        Call<PostResponse> call = service.submitData(request, authToken, userId);
+        Call<PostResponse> call = service.submitData(request, authToken, cookie, userId, userId2);
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<PostResponse> call, @NonNull Response<PostResponse> response) {

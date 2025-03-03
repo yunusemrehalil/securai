@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.nomaddeveloper.securai"
+    namespace = "com.nomaddeveloper.example.securai"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.nomaddeveloper.securai"
+        applicationId = "com.nomaddeveloper.example.securai"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -26,8 +26,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding = true

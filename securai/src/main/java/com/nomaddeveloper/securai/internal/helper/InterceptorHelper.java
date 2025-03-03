@@ -1,8 +1,11 @@
-package com.nomaddeveloper.securai.helper;
+package com.nomaddeveloper.securai.internal.helper;
+
+import androidx.annotation.RestrictTo;
 
 import com.nomaddeveloper.securai.annotation.Secured;
-import com.nomaddeveloper.securai.logger.SecuraiLogger;
-import com.nomaddeveloper.securai.model.Field;
+import com.nomaddeveloper.securai.internal.logger.SecuraiLogger;
+import com.nomaddeveloper.securai.internal.model.Field;
+import com.nomaddeveloper.securai.internal.model.SecuraiRequest;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -11,7 +14,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import okhttp3.MediaType;
@@ -25,6 +30,7 @@ import retrofit2.Invocation;
  * Helper class for intercepting and analyzing HTTP requests based on the {@link Secured} annotation.
  * This class provides methods to extract secured fields, their values, and handle various request body encoding scenarios.
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class InterceptorHelper {
 
     private static final String TAG = InterceptorHelper.class.getCanonicalName();
@@ -66,28 +72,28 @@ public class InterceptorHelper {
     /**
      * Extracts values for the specified fields from the request, with robust UTF-8 detection.
      *
-     * @param request         The OkHttp Request to analyze
-     * @param fieldsToAnalyze The fields to extract (BODY, HEADER, PARAM, ALL)
+     * @param request The OkHttp Request to analyze
+     * @param fields  The fields to extract (BODY, HEADER, PARAM, ALL)
      * @return A map of Field to their extracted values
      */
-    public static Map<Field, Object> extractFieldValues(Request request, Set<Field> fieldsToAnalyze) {
-        Map<Field, Object> fieldValues = new HashMap<>();
+    public static SecuraiRequest extractFieldValues(Request request, Set<Field> fields) {
+        String body = null;
+        Map<String, List<String>> headers = null;
+        Map<String, String> queryParameters = null;
 
-        if (fieldsToAnalyze.contains(Field.ALL)) {
-            fieldsToAnalyze = EnumSet.of(Field.BODY, Field.HEADER, Field.PARAM);
+        if (fields.contains(Field.ALL)) {
+            fields = EnumSet.of(Field.BODY, Field.HEADER, Field.PARAM);
         }
 
-        for (Field field : fieldsToAnalyze) {
+        for (Field field : fields) {
             switch (field) {
                 case BODY:
                     RequestBody requestBody = request.body();
                     if (requestBody == null) {
-                        fieldValues.put(Field.BODY, null);
                         break;
                     }
 
                     if (requestBody.isDuplex() || requestBody.isOneShot()) {
-                        fieldValues.put(Field.BODY, null);
                         break;
                     }
 
@@ -104,39 +110,37 @@ public class InterceptorHelper {
                         }
 
                         MediaType contentType = requestBody.contentType();
-                        Charset charset = contentType != null ? contentType.charset(UTF_8) : UTF_8;
+                        Charset charset = contentType != null
+                                ? Objects.requireNonNullElse(contentType.charset(UTF_8), UTF_8)
+                                : UTF_8;
 
                         if (isProbablyUtf8(buffer)) {
-                            fieldValues.put(Field.BODY, buffer.readString(charset));
-                        } else {
-                            fieldValues.put(Field.BODY, null);
+                            body = buffer.readString(charset);
                         }
                     } catch (IOException e) {
                         SecuraiLogger.error(TAG, "Failed to extract request body: ", e);
-                        fieldValues.put(Field.BODY, null);
                     }
                     break;
 
                 case HEADER:
-                    fieldValues.put(Field.HEADER, request.headers().toMultimap());
+                    headers = request.headers().toMultimap();
                     break;
 
                 case PARAM:
-                    Map<String, String> params = new HashMap<>();
+                    final Map<String, String> params = new HashMap<>();
                     request.url().queryParameterNames().forEach(name -> {
                         String value = request.url().queryParameter(name);
                         params.put(name, value);
                     });
-                    fieldValues.put(Field.PARAM, params);
+                    queryParameters = params;
                     break;
-
                 default:
                     SecuraiLogger.warn(TAG, "Unknown field type: " + field);
                     break;
             }
         }
 
-        return fieldValues;
+        return new SecuraiRequest(body, headers, queryParameters);
     }
 
     /**

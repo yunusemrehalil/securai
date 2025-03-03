@@ -1,4 +1,4 @@
-package com.nomaddeveloper.securai.model;
+package com.nomaddeveloper.securai.internal.model;
 
 /**
  * Enum representing different parts of an HTTP request that can be analyzed for security.

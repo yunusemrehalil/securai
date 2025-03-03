@@ -1,22 +1,31 @@
 package com.nomaddeveloper.securai;
 
-import static com.nomaddeveloper.securai.helper.InterceptorHelper.extractFieldValues;
-import static com.nomaddeveloper.securai.helper.InterceptorHelper.extractFields;
-import static com.nomaddeveloper.securai.helper.InterceptorHelper.getSecuredAnnotation;
+import static com.nomaddeveloper.securai.internal.helper.InterceptorHelper.extractFieldValues;
+import static com.nomaddeveloper.securai.internal.helper.InterceptorHelper.extractFields;
+import static com.nomaddeveloper.securai.internal.helper.InterceptorHelper.getSecuredAnnotation;
+import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.INITIAL_ERROR;
+import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.INTERCEPTING_REQUEST;
+import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.SECURITY_ANALYSIS_TIMEOUT;
+import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.SECURITY_THREAT_DETECTED;
+import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.THREAD_INTERRUPTED;
 
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 
 import com.nomaddeveloper.securai.annotation.Secured;
-import com.nomaddeveloper.securai.callback.ClassifyListenerImpl;
-import com.nomaddeveloper.securai.helper.XSSClassifierHelper;
-import com.nomaddeveloper.securai.model.Field;
-import com.nomaddeveloper.securai.response.denied.DeniedResponse;
-import com.nomaddeveloper.securai.response.denied.DeniedResponseImpl;
+import com.nomaddeveloper.securai.internal.callback.ClassifyListener;
+import com.nomaddeveloper.securai.internal.callback.ClassifyListenerImpl;
+import com.nomaddeveloper.securai.internal.helper.XSSClassifierHelper;
+import com.nomaddeveloper.securai.internal.logger.SecuraiLogger;
+import com.nomaddeveloper.securai.internal.model.SecuraiResult;
+import com.nomaddeveloper.securai.internal.response.denied.DeniedResponse;
+import com.nomaddeveloper.securai.internal.response.denied.DeniedResponseImpl;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -28,38 +37,29 @@ import retrofit2.Invocation;
  * This interceptor extracts specified fields from the request and performs security checks using an XSS classifier.
  */
 public class SecuraiInterceptor implements Interceptor {
-
-    private final XSSClassifierHelper XSSClassifierHelper;
+    private static final String TAG = SecuraiInterceptor.class.getCanonicalName();
+    private static final long LATCH_TIMEOUT = 5L;
+    private final XSSClassifierHelper xssClassifierHelper;
     private final DeniedResponse deniedResponse;
-    private final boolean loggingEnabled;
-
-    /**
-     * Constructs a new SecuraiInterceptor with default denied response handling.
-     *
-     * @param context        The application context.
-     * @param loggingEnabled Enables or disables logging.
-     */
-    public SecuraiInterceptor(@NonNull Context context, boolean loggingEnabled) {
-        this(context, new DeniedResponseImpl(), loggingEnabled);
-    }
 
     /**
      * Constructs a new SecuraiInterceptor with custom denied response handling.
      *
      * @param context        The application context.
-     * @param deniedResponse Custom handler for denied responses.
-     * @param loggingEnabled Enables or disables logging.
+     * @param loggingEnabled {@code true} to enable logging, {@code false} to disable it.
      */
-    public SecuraiInterceptor(@NonNull Context context, @NonNull DeniedResponse deniedResponse, boolean loggingEnabled) {
-        this.XSSClassifierHelper = new XSSClassifierHelper(context, new ClassifyListenerImpl());
-        this.deniedResponse = deniedResponse;
-        this.loggingEnabled = loggingEnabled;
+    public SecuraiInterceptor(@NonNull Context context, boolean loggingEnabled) {
+        SecuraiLogger.setLoggingEnabled(loggingEnabled);
+        this.xssClassifierHelper = new XSSClassifierHelper(context);
+        this.deniedResponse = new DeniedResponseImpl();
     }
 
     @NonNull
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
+
+        SecuraiLogger.debug(TAG, INTERCEPTING_REQUEST.getMessage() + request.url());
 
         Invocation invocation = request.tag(Invocation.class);
         if (invocation == null) {
@@ -71,10 +71,29 @@ public class SecuraiInterceptor implements Interceptor {
             return chain.proceed(request);
         }
 
-        Map<Field, Object> fieldValues = extractFieldValues(request, extractFields(secured));
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<SecuraiResult> result = new AtomicReference<>(new SecuraiResult(false, INITIAL_ERROR.getMessage()));
 
-        //TODO() TextClassification implementation
+        ClassifyListener listener = new ClassifyListenerImpl(latch, result);
 
-        return chain.proceed(request);
+        xssClassifierHelper.classify(extractFieldValues(request, extractFields(secured)), listener);
+
+        try {
+            if (!latch.await(LATCH_TIMEOUT, TimeUnit.SECONDS)) {
+                SecuraiLogger.warn(TAG, SECURITY_ANALYSIS_TIMEOUT.getMessage() + request.url());
+                return chain.proceed(request);
+            }
+
+            if (result.get().threatDetected()) {
+                SecuraiLogger.error(TAG, SECURITY_THREAT_DETECTED.getMessage() + request.url());
+                return deniedResponse.onSecurityViolation(request, result.get().value()).raw();
+            }
+
+            return chain.proceed(request);
+        } catch (InterruptedException interruptedException) {
+            Thread.currentThread().interrupt();
+            SecuraiLogger.error(TAG, THREAD_INTERRUPTED.getMessage(), interruptedException);
+            return chain.proceed(request);
+        }
     }
 }

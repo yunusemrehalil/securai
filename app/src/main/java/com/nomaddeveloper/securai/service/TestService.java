@@ -1,7 +1,7 @@
 package com.nomaddeveloper.securai.service;
 
 import com.nomaddeveloper.securai.annotation.Secured;
-import com.nomaddeveloper.securai.model.Field;
+import com.nomaddeveloper.securai.internal.model.Field;
 import com.nomaddeveloper.securai.network.model.PostRequest;
 import com.nomaddeveloper.securai.network.model.PostResponse;
 
@@ -16,6 +16,8 @@ public interface TestService {
     @POST("posts")
     Call<PostResponse> submitData(
             @Body PostRequest data,
-            @Header("Authorization") String authToken,
-            @Query("userId") String userId);
+            @Header(value = "Authorization") String authToken,
+            @Header(value = "Cookie") String cookie,
+            @Query(value = "userId") String userId,
+            @Query(value = "userId2") String userId2);
 }

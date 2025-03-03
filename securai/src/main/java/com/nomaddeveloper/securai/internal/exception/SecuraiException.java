@@ -1,10 +1,13 @@
-package com.nomaddeveloper.securai.exception;
+package com.nomaddeveloper.securai.internal.exception;
+
+import androidx.annotation.RestrictTo;
 
 /**
  * Custom exception class for Securai-specific errors.
  * This exception extends {@link RuntimeException} to provide a way to handle
  * Securai-related errors in a more specific and informative manner.
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class SecuraiException extends RuntimeException {
 
     /**
