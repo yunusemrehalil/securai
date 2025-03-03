@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    id("maven-publish")
 }
 
 android {
@@ -28,6 +29,17 @@ android {
     }
     buildFeatures {
         buildConfig = true
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            from(components["release"])
+            groupId = "com.github.yunusemrehalil"
+            artifactId = "securai"
+            version = "1.0.0-beta"
+        }
     }
 }
 
