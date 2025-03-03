@@ -104,9 +104,8 @@ Contributions are welcome! To contribute:
 
 The project's license information can be found in the [LICENSE.md](./LICENSE.md) file.
 
----
-
 ## Contact
 
 For issues or inquiries, open an issue on GitHub or contact me at mtmyunusemrehalil@gmail.com
 
+---
