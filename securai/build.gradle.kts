@@ -30,15 +30,23 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("release") {
-            from(components["release"])
-            groupId = "com.github.yunusemrehalil"
-            artifactId = "securai"
-            version = "1.0.0-beta"
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                from(components["release"])
+                groupId = "com.github.yunusemrehalil"
+                artifactId = "securai"
+                version = "1.0.0-beta"
+            }
         }
     }
 }
