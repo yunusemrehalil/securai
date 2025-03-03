@@ -3,8 +3,8 @@
 ## Overview
 
 Securai Interceptor is an advanced security interceptor for OkHttp that analyzes HTTP requests for
-potential security vulnerabilities. It leverages AI-based security validation to detect threats such
-as XSS (Cross-Site Scripting) attacks in network requests.
+potential security vulnerabilities. It leverages AI-based security validation to detect XSS (Cross-Site Scripting) 
+attacks in network requests.
 
 ### Features
 
