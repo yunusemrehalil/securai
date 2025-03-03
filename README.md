@@ -102,7 +102,7 @@ Contributions are welcome! To contribute:
 
 ## License
 
-*(License information will be added later)*
+The project's license information can be found in the [LICENSE.md](./LICENSE.md) file.
 
 ---
 
