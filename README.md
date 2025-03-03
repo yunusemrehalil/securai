@@ -12,8 +12,6 @@ as XSS (Cross-Site Scripting) attacks in network requests.
   data.
 - **Annotation-Based Security Enforcement**: The `@Secured` annotation allows developers to mark
   specific endpoints for security validation.
-- **Customizable Handling of Security Violations**: Provides the ability to define custom responses
-  when threats are detected.
 - **Logging Support**: Enables detailed logging for debugging and monitoring security events.
 - **Minimal Overhead**: Designed to integrate seamlessly with OkHttp without significant performance
   impact.
@@ -78,11 +76,6 @@ public Response<ResponseBody> onSecurityViolation(Request request, String summar
 
 - Used to mark API methods for security validation.
 - Supports field-level security checking (BODY, HEADER, PARAM, or ALL).
-
-### **DeniedResponseImpl**
-
-- Handles blocked requests due to detected security threats.
-- Returns an HTTP 403 error response by default.
 
 ## Contribution
 
