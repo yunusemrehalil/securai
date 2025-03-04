@@ -2,23 +2,19 @@
 
 ## Overview
 
-Securai Interceptor is an advanced security interceptor for OkHttp that analyzes HTTP requests for
-potential security vulnerabilities. It leverages AI-based security validation to detect XSS (Cross-Site Scripting) 
-attacks in network requests.
+Securai Interceptor is a smart security layer for OkHttp that helps keep your network requests safe. It automatically scans requests for XSS (Cross-Site Scripting) vulnerabilities using an AI-powered classifier and either blocks or allows them based on the results.
 
-### Features
+### Why Use Securai Interceptor?
 
-- **AI-Based Security Analysis**: Uses an integrated XSS classifier to detect threats in request
-  data.
-- **Annotation-Based Security Enforcement**: The `@Secured` annotation allows developers to mark
-  specific endpoints for security validation.
-- **Logging Support**: Enables detailed logging for debugging and monitoring security events.
-- **Minimal Overhead**: Designed to integrate seamlessly with OkHttp without significant performance
-  impact.
+- **AI-Powered Security**: Detects XSS threats in request data before they reach your server.
+- **Seamless Integration**: Works with OkHttp and Retrofit with minimal setup.
+- **Annotation-Based Control**: Use `@Secured` to specify which parts of your requests should be analyzed.
+- **Optimized for ARM64**: The library is built for ARM64 devices. It won’t work on x86 Android Studio emulators, so testing must be done on ARM64 machines or emulators.
+- **Lightning-Fast**: The embedded XSS detection model is lightweight and delivers security analysis in just **X milliseconds** (you can update this value later).
 
 ## Installation
 
-To install Securai Interceptor, add the following dependency to your project's `build.gradle` file:
+To add Securai Interceptor to your project, include the following in your `build.gradle` file:
 
 ```gradle
 repositories {
@@ -30,12 +26,11 @@ dependencies {
 }
 ```
 
-## Usage
+## How It Works
 
-### 1. Add the `@Secured` Annotation
+### 1. Secure API Endpoints with `@Secured`
 
-To enable security validation on an API endpoint, annotate the Retrofit method with `@Secured` and
-specify which parts of the request should be analyzed.
+Simply add the `@Secured` annotation to Retrofit API methods to enable security checks.
 
 ```java
 public interface ApiService {
@@ -45,16 +40,15 @@ public interface ApiService {
 }
 ```
 
-- The above example ensures that both the request body and parameters are checked for security
-  vulnerabilities.
+- This ensures that both the request body and parameters are checked for security vulnerabilities.
 
 ### 2. Attach the Interceptor to OkHttp
 
-Integrate `SecuraiInterceptor` into your OkHttp client to enforce security validation.
+Register `SecuraiInterceptor` in your OkHttp client to enforce security validation.
 
 ```java
 OkHttpClient client = new OkHttpClient.Builder()
-        .addInterceptor(new SecuraiInterceptor(context, true))
+        .addInterceptor(new SecuraiInterceptor(applicationContext, true))
         .build();
 
 Retrofit retrofit = new Retrofit.Builder()
@@ -64,18 +58,13 @@ Retrofit retrofit = new Retrofit.Builder()
         .build();
 ```
 
-### 3. Handling Security Violations
+### 3. What Happens If a Threat Is Found?
 
-If a security threat is detected, the interceptor triggers a blocked response handled by
-`DeniedResponseImpl`. The default behavior is returning an HTTP 403 error.
+If a security threat is detected, the interceptor blocks the request and denies it with 403. In future versions, custom handling for denied requests will be supported.
 
-```java
+## Performance
 
-@Override
-public Response<ResponseBody> onSecurityViolation(Request request, String summary) {
-    return createErrorResponse(request, 403, "Security Threat Detected");
-}
-```
+To be filled after.
 
 ## API Overview
 
@@ -83,17 +72,17 @@ public Response<ResponseBody> onSecurityViolation(Request request, String summar
 
 - Intercepts outgoing network requests.
 - Extracts request data (body, headers, parameters).
-- Analyzes the request using an AI-powered XSS classifier.
-- Blocks requests that contain security threats.
+- Uses an AI-powered XSS classifier to analyze the request.
+- Blocks requests containing security threats.
 
 ### **@Secured Annotation**
 
-- Used to mark API methods for security validation.
-- Supports field-level security checking (BODY, HEADER, PARAM, or ALL).
+- Marks API methods for security validation.
+- Supports selective security checking (BODY, HEADER, PARAM, or ALL).
 
-## Contribution
+## Contributing
 
-Contributions are welcome! To contribute:
+Want to improve Securai Interceptor? Contributions are always welcome!
 
 1. Fork the repository.
 2. Create a new branch.
@@ -102,10 +91,8 @@ Contributions are welcome! To contribute:
 
 ## License
 
-The project's license information can be found in the [LICENSE.md](./LICENSE.md) file.
+The project's license information will be available soon in the [LICENSE.md](./LICENSE.md) file.
 
-## Contact
+## Get in Touch
 
-For issues or inquiries, open an issue on GitHub or contact me at mtmyunusemrehalil@gmail.com
-
----
+Have questions or feedback? Open an issue on GitHub or contact me at mtmyunusemrehalil@gmail.com.
