@@ -10,7 +10,7 @@ Securai Interceptor is a smart security layer for OkHttp that helps keep your ne
 - **Seamless Integration**: Works with OkHttp and Retrofit with minimal setup.
 - **Annotation-Based Control**: Use `@Secured` to specify which parts of your requests should be analyzed.
 - **Optimized for ARM64**: The library is built for ARM64 devices. It won’t work on x86 Android Studio emulators, so testing must be done on ARM64 machines or emulators.
-- **Lightning-Fast**: The embedded XSS detection model is lightweight and delivers security analysis in just **X milliseconds** (you can update this value later).
+- **Lightning-Fast**: The embedded XSS detection model is lightweight and delivers security analysis in just **milliseconds**.
 
 ## Installation
 
