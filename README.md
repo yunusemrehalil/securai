@@ -4,7 +4,7 @@
 
 Securai Interceptor is a smart security layer for OkHttp that helps keep your network requests safe. XSS vulnerabilities can expose sensitive user data and compromise your application's security. Securai Interceptor acts as a first line of defense, proactively scanning requests for these threats. It automatically scans requests for XSS (Cross-Site Scripting) vulnerabilities using an embedded AI-powered classifier and either blocks or allows them based on the results.
 
-### What Securai Interceptor Brings to the Table
+### Features
 
 -   **Catches XSS before it hits your server**: Uses AI to detect potential XSS threats in your requests before they reach your backend.
 -   **Seamless Integration**: Works effortlessly with OkHttp and Retrofit, requiring minimal setup.
