@@ -2,15 +2,15 @@
 
 ## Overview
 
-Securai Interceptor is a smart security layer for OkHttp that helps keep your network requests safe. It automatically scans requests for XSS (Cross-Site Scripting) vulnerabilities using an AI-powered classifier and either blocks or allows them based on the results.
+Securai Interceptor is a smart security layer for OkHttp that helps keep your network requests safe. XSS vulnerabilities can expose sensitive user data and compromise your application's security. Securai Interceptor acts as a first line of defense, proactively scanning requests for these threats. It automatically scans requests for XSS (Cross-Site Scripting) vulnerabilities using an embedded AI-powered classifier and either blocks or allows them based on the results.
 
-### Why Use Securai Interceptor?
+### What Securai Interceptor Brings to the Table
 
-- **AI-Powered Security**: Detects XSS threats in request data before they reach your server.
-- **Seamless Integration**: Works with OkHttp and Retrofit with minimal setup.
-- **Annotation-Based Control**: Use `@Secured` to specify which parts of your requests should be analyzed.
-- **Optimized for ARM64**: The library is built for ARM64 devices. It won’t work on x86 Android Studio emulators, so testing must be done on ARM64 machines or emulators.
-- **Lightning-Fast**: The embedded XSS detection model is lightweight and delivers security analysis in just **milliseconds**.
+-   **Catches XSS before it hits your server**: Uses AI to detect potential XSS threats in your requests before they reach your backend.
+-   **Seamless Integration**: Works effortlessly with OkHttp and Retrofit, requiring minimal setup.
+-   **Control which parts of your requests are checked**: The @Secured annotation lets you choose which parts of your requests should be analyzed.
+-   **Optimized for ARM64**: The library is built for ARM64 devices and won’t work on x86 Android Studio emulators. Testing must be done on real ARM64 devices or compatible emulators.
+-   **Fast and lightweight**: The embedded AI model is designed for speed, adding only **milliseconds** to request processing time.
 
 ## Installation
 
