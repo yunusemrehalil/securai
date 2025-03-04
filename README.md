@@ -82,12 +82,7 @@ To be filled after.
 
 ## Contributing
 
-Want to improve Securai Interceptor? Contributions are always welcome!
-
-1. Fork the repository.
-2. Create a new branch.
-3. Implement your feature or fix.
-4. Submit a pull request.
+Have ideas or improvements? Feel free to open a pull request or create an issue on GitHub!
 
 ## License
 
