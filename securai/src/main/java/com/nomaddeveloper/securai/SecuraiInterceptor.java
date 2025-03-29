@@ -41,20 +41,31 @@ public class SecuraiInterceptor implements Interceptor {
     private static final String TAG = SecuraiInterceptor.class.getSimpleName();
     private static final long LATCH_TIMEOUT = 5L;
     private static final int DEFAULT_LATCH_COUNT = 1;
-
+    private static final float DEFAULT_XSS_SECURITY_THRESHOLD = 0.8f;
     private final XSSClassifierHelper xssClassifierHelper;
     private final DeniedResponse deniedResponse;
 
     /**
-     * Constructs a new SecuraiInterceptor with custom denied response handling.
+     * Constructs a new SecuraiInterceptor with custom xss security threshold.
+     *
+     * @param context              The application context.
+     * @param loggingEnabled       {@code true} to enable logging, {@code false} to disable it.
+     * @param xssSecurityThreshold The security threshold, must be between 0 and 1.
+     */
+    public SecuraiInterceptor(@NonNull Context context, boolean loggingEnabled, float xssSecurityThreshold) {
+        SecuraiLogger.setLoggingEnabled(loggingEnabled);
+        this.xssClassifierHelper = new XSSClassifierHelper(context, xssSecurityThreshold);
+        this.deniedResponse = new DeniedResponseImpl();
+    }
+
+    /**
+     * Constructs a new SecuraiInterceptor with default xss security threshold.
      *
      * @param context        The application context.
      * @param loggingEnabled {@code true} to enable logging, {@code false} to disable it.
      */
     public SecuraiInterceptor(@NonNull Context context, boolean loggingEnabled) {
-        SecuraiLogger.setLoggingEnabled(loggingEnabled);
-        this.xssClassifierHelper = new XSSClassifierHelper(context);
-        this.deniedResponse = new DeniedResponseImpl();
+        this(context, loggingEnabled, DEFAULT_XSS_SECURITY_THRESHOLD);
     }
 
     @NonNull

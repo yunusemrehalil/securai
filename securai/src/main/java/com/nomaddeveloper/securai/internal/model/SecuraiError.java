@@ -16,7 +16,8 @@ public enum SecuraiError {
     XSS_CLASSIFIER_NOT_INITIALIZED("XSS classifier is not initialized."),
     NO_FIELD_VALUE_PROVIDED("No field value provided for classification."),
     XSS_CATEGORY_MISSING("Category with index '1' (XSS) not found."),
-    SECURITY_THREAT_DETECTED("Request contains a security threat");
+    SECURITY_THREAT_DETECTED("Request contains a security threat"),
+    THRESHOLD_IS_NOT_IN_BOUND("Threshold must be between 0 and 1");
 
     private final String message;
 
