@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.yunusemrehalil:securai:1.0.0-beta")
+    implementation("com.github.yunusemrehalil:securai:1.0.2-beta")
 }
 ```
 
