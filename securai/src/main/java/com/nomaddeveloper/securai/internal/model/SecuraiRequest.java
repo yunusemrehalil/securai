@@ -26,7 +26,7 @@ public class SecuraiRequest {
      * @param queryParameters A map of query parameters where the key is the parameter name
      *                        and the value is the parameter value.
      */
-    public SecuraiRequest(String body, Map<String, List<String>> headers, Map<String, String> queryParameters) {
+    public SecuraiRequest(final String body, final Map<String, List<String>> headers, final Map<String, String> queryParameters) {
         this.body = body;
         this.headers = headers;
         this.queryParameters = queryParameters;
@@ -64,7 +64,7 @@ public class SecuraiRequest {
      *
      * @param body The new request body.
      */
-    public void setBody(String body) {
+    public void setBody(final String body) {
         this.body = body;
     }
 
@@ -73,7 +73,7 @@ public class SecuraiRequest {
      *
      * @param headers A map containing header names and their corresponding values.
      */
-    public void setHeaders(Map<String, List<String>> headers) {
+    public void setHeaders(final Map<String, List<String>> headers) {
         this.headers = headers;
     }
 
@@ -82,7 +82,7 @@ public class SecuraiRequest {
      *
      * @param queryParameters A map containing query parameter names and values.
      */
-    public void setQueryParameters(Map<String, String> queryParameters) {
+    public void setQueryParameters(final Map<String, String> queryParameters) {
         this.queryParameters = queryParameters;
     }
 }

@@ -22,7 +22,7 @@ public enum SecuraiError {
 
     private final String message;
 
-    SecuraiError(String message) {
+    SecuraiError(final String message) {
         this.message = message;
     }
 
@@ -34,7 +34,7 @@ public enum SecuraiError {
         return new SecuraiException(message);
     }
 
-    public SecuraiException toException(Throwable cause) {
+    public SecuraiException toException(final Throwable cause) {
         return new SecuraiException(message, cause);
     }
 }

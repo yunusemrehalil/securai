@@ -15,16 +15,16 @@ public class TestRequest {
     private static final TestService service = RetrofitBuilder.createTestService();
 
     public static void mockPostRequest() {
-        PostRequest request = new PostRequest("Test Title", "<script>alert('XSS')</script>", 1);
-        String authToken = "Bearer 12345";
-        String cookie = "Cookie 123";
-        String userId = "user123";
-        String userId2 = "testUser";
+        final PostRequest request = new PostRequest("Test Title", "<script>alert('XSS')</script>", 1);
+        final String authToken = "Bearer 12345";
+        final String cookie = "Cookie 123";
+        final String userId = "user123";
+        final String userId2 = "testUser";
 
-        Call<PostResponse> call = service.submitData(request, authToken, cookie, userId, userId2);
+        final Call<PostResponse> call = service.submitData(request, authToken, cookie, userId, userId2);
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<PostResponse> call, @NonNull Response<PostResponse> response) {
+            public void onResponse(@NonNull final Call<PostResponse> call, @NonNull final Response<PostResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {
                     System.out.println("Response: " + response.body().getTitle());
                 } else {
@@ -33,7 +33,7 @@ public class TestRequest {
             }
 
             @Override
-            public void onFailure(@NonNull Call<PostResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull final Call<PostResponse> call, @NonNull final Throwable t) {
                 System.err.println("Request error: " + t.getMessage());
             }
         });

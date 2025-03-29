@@ -48,7 +48,7 @@ public class SecuraiInterceptor implements Interceptor {
      * @param builder The {@link SecuraiInterceptorBuilder} containing the configuration for this interceptor.
      *                Must not be null.
      */
-    SecuraiInterceptor(@NonNull SecuraiInterceptorBuilder builder) {
+    SecuraiInterceptor(@NonNull final SecuraiInterceptorBuilder builder) {
         SecuraiLogger.setLoggingEnabled(builder.isLoggingEnabled());
         this.xssClassifierHelper = new XSSClassifierHelper(builder.getContext(), builder.getThreshold());
         this.deniedResponse = builder.getDeniedResponse();
@@ -56,25 +56,25 @@ public class SecuraiInterceptor implements Interceptor {
 
     @NonNull
     @Override
-    public Response intercept(@NonNull Chain chain) throws IOException {
-        Request request = chain.request();
+    public Response intercept(@NonNull final Chain chain) throws IOException {
+        final Request request = chain.request();
 
         SecuraiLogger.debug(TAG, INTERCEPTING_REQUEST.getMessage() + request.url());
 
-        Invocation invocation = request.tag(Invocation.class);
+        final Invocation invocation = request.tag(Invocation.class);
         if (invocation == null) {
             return chain.proceed(request);
         }
 
-        Secured secured = getSecuredAnnotation(invocation);
+        final Secured secured = getSecuredAnnotation(invocation);
         if (secured == null) {
             return chain.proceed(request);
         }
 
-        CountDownLatch latch = new CountDownLatch(DEFAULT_LATCH_COUNT);
-        AtomicReference<SecuraiResult> result = new AtomicReference<>(new SecuraiResult(false, INITIAL_ERROR.getMessage()));
+        final CountDownLatch latch = new CountDownLatch(DEFAULT_LATCH_COUNT);
+        final AtomicReference<SecuraiResult> result = new AtomicReference<>(new SecuraiResult(false, INITIAL_ERROR.getMessage()));
 
-        ClassifyListener listener = new ClassifyListenerImpl(latch, result);
+        final ClassifyListener listener = new ClassifyListenerImpl(latch, result);
 
         xssClassifierHelper.classify(extractFieldValues(request, extractFields(secured)), listener);
 
@@ -90,7 +90,7 @@ public class SecuraiInterceptor implements Interceptor {
             }
 
             return chain.proceed(request);
-        } catch (InterruptedException interruptedException) {
+        } catch (final InterruptedException interruptedException) {
             Thread.currentThread().interrupt();
             SecuraiLogger.error(TAG, THREAD_INTERRUPTED.getMessage(), interruptedException);
             return chain.proceed(request);

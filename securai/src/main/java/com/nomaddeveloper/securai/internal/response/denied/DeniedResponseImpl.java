@@ -26,7 +26,7 @@ public class DeniedResponseImpl implements DeniedResponse {
      * Logs a warning and returns a 403 response.
      */
     @Override
-    public Response<ResponseBody> onSecurityViolation(Request request, String summary) {
+    public Response<ResponseBody> onSecurityViolation(final Request request, final String summary) {
         return createErrorResponse(request, 403, SECURITY_THREAT_DETECTED.getMessage());
     }
 
@@ -38,9 +38,9 @@ public class DeniedResponseImpl implements DeniedResponse {
      * @param message Error message
      * @return Retrofit Response with error details
      */
-    protected Response<ResponseBody> createErrorResponse(Request request, int code, String message) {
-        ResponseBody errorBody = ResponseBody.Companion.create(message, MediaType.get("text/plain"));
-        okhttp3.Response rawResponse = new okhttp3.Response.Builder()
+    protected Response<ResponseBody> createErrorResponse(final Request request, final int code, final String message) {
+        final ResponseBody errorBody = ResponseBody.Companion.create(message, MediaType.get("text/plain"));
+        final okhttp3.Response rawResponse = new okhttp3.Response.Builder()
                 .request(request)
                 .code(code)
                 .protocol(Protocol.HTTP_1_1)

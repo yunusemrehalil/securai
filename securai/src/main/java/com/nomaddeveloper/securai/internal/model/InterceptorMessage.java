@@ -16,7 +16,7 @@ public enum InterceptorMessage {
 
     private final String message;
 
-    InterceptorMessage(String message) {
+    InterceptorMessage(final String message) {
         this.message = message;
     }
 

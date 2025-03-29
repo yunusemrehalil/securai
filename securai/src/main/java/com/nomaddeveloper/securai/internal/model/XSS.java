@@ -25,7 +25,7 @@ public enum XSS {
      *
      * @param value The integer representation of the classification.
      */
-    XSS(int value) {
+    XSS(final int value) {
         this.value = value;
     }
 

@@ -14,9 +14,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitBuilder {
     private static Retrofit getRetrofit() {
-        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
-        OkHttpClient client = new OkHttpClient.Builder()
+        final OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new SecuraiInterceptorBuilder(getAppContext())
                         .setThreshold(0.6f)
                         .setLoggingEnabled(true)
