@@ -13,7 +13,6 @@ import static com.nomaddeveloper.securai.internal.model.Field.BODY;
 import static com.nomaddeveloper.securai.internal.model.Field.HEADER;
 import static com.nomaddeveloper.securai.internal.model.Field.PARAM;
 import static com.nomaddeveloper.securai.internal.model.SecuraiError.NO_FIELD_VALUE_PROVIDED;
-import static com.nomaddeveloper.securai.internal.model.SecuraiError.THRESHOLD_IS_NOT_IN_BOUND;
 import static com.nomaddeveloper.securai.internal.model.SecuraiError.XSS_CATEGORY_MISSING;
 import static com.nomaddeveloper.securai.internal.model.SecuraiError.XSS_CLASSIFIER_INIT_FAILED;
 import static com.nomaddeveloper.securai.internal.model.SecuraiError.XSS_CLASSIFIER_NOT_INITIALIZED;
@@ -30,7 +29,6 @@ import com.google.mediapipe.tasks.core.BaseOptions;
 import com.google.mediapipe.tasks.text.textclassifier.TextClassifier;
 import com.google.mediapipe.tasks.text.textclassifier.TextClassifierResult;
 import com.nomaddeveloper.securai.internal.callback.ClassifyListener;
-import com.nomaddeveloper.securai.internal.exception.SecuraiException;
 import com.nomaddeveloper.securai.internal.logger.SecuraiLogger;
 import com.nomaddeveloper.securai.internal.model.Field;
 import com.nomaddeveloper.securai.internal.model.SecuraiRequest;
@@ -55,7 +53,7 @@ public class XSSClassifierHelper {
     private static final float DEFAULT_XSS_SCORE = -1f;
     private static final int CLASSIFICATION_RESULT_SIZE = 2;
     private final Context context;
-    private final float xssSecurityThreshold;
+    private final float threshold;
     private TextClassifier xssClassifier;
 
 
@@ -64,12 +62,9 @@ public class XSSClassifierHelper {
      *
      * @param context The application context used for loading the model.
      */
-    public XSSClassifierHelper(@NonNull Context context, float xssSecurityThreshold) {
+    public XSSClassifierHelper(@NonNull Context context, float threshold) {
         this.context = context;
-        if (xssSecurityThreshold < 0 || xssSecurityThreshold > 1) {
-            throw new SecuraiException(THRESHOLD_IS_NOT_IN_BOUND.getMessage());
-        }
-        this.xssSecurityThreshold = xssSecurityThreshold;
+        this.threshold = threshold;
         initClassifier();
     }
 
@@ -223,7 +218,7 @@ public class XSSClassifierHelper {
             return false;
         }
 
-        if (xssScore > xssSecurityThreshold) {
+        if (xssScore > threshold) {
             classifyListener.onThreatDetected(field, value);
             return true;
         }

@@ -17,7 +17,8 @@ public enum SecuraiError {
     NO_FIELD_VALUE_PROVIDED("No field value provided for classification."),
     XSS_CATEGORY_MISSING("Category with index '1' (XSS) not found."),
     SECURITY_THREAT_DETECTED("Request contains a security threat"),
-    THRESHOLD_IS_NOT_IN_BOUND("Threshold must be between 0 and 1");
+    THRESHOLD_IS_NOT_IN_BOUND("Threshold must be between 0 and 1"),
+    CONTEXT_MUST_NOT_BE_NULL("Context must not be null.");
 
     private final String message;
 

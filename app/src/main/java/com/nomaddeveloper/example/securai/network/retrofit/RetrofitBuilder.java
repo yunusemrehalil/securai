@@ -4,8 +4,8 @@ import static com.nomaddeveloper.example.securai.SecuraiApp.getAppContext;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nomaddeveloper.securai.SecuraiInterceptor;
 import com.nomaddeveloper.example.securai.service.TestService;
+import com.nomaddeveloper.securai.SecuraiInterceptorBuilder;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -17,7 +17,10 @@ public class RetrofitBuilder {
         Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new SecuraiInterceptor(getAppContext(), true))
+                .addInterceptor(new SecuraiInterceptorBuilder(getAppContext())
+                        .setThreshold(0.6f)
+                        .setLoggingEnabled(true)
+                        .build())
                 .addInterceptor(new HttpLoggingInterceptor())
                 .build();
 
