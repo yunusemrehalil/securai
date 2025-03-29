@@ -9,7 +9,7 @@ Securai Interceptor is a smart security layer for OkHttp that helps keep your ne
 -   **Catches XSS before it hits your server**: Uses AI to detect potential XSS threats in your requests before they reach your backend.
 -   **Seamless Integration**: Works effortlessly with OkHttp and Retrofit, requiring minimal setup.
 -   **Control which parts of your requests are checked**: The @Secured annotation lets you choose which parts of your requests should be analyzed.
--   **Optimized for ARM64**: The library is built for ARM64 devices and won’t work on x86 Android Studio emulators. Testing must be done on real ARM64 devices or compatible emulators.
+-   **Optimized for ARM64**: Due to TensorFlow Lite model limitations, the library is designed to work on ARM64 devices and is not compatible with x86 Android Studio emulators. Testing must be performed on real ARM64 devices or compatible emulators.
 -   **Fast and lightweight**: The embedded AI model is designed for speed, adding only **milliseconds** to request processing time.
 
 ## Installation
@@ -47,8 +47,14 @@ public interface ApiService {
 Register `SecuraiInterceptor` in your OkHttp client to enforce security validation.
 
 ```java
+SecuraiInterceptor interceptor = new SecuraiInterceptorBuilder(context)
+        .setLoggingEnabled(true)  // Enable logging
+        .setThreshold(0.75f)      // Custom security threshold
+        .setDeniedResponse(new CustomDeniedResponse()) // Custom response handling
+        .build();
+
 OkHttpClient client = new OkHttpClient.Builder()
-        .addInterceptor(new SecuraiInterceptor(applicationContext, true))
+        .addInterceptor(interceptor)
         .build();
 
 Retrofit retrofit = new Retrofit.Builder()
@@ -57,10 +63,6 @@ Retrofit retrofit = new Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
         .build();
 ```
-
-### 3. What Happens If a Threat Is Found?
-
-If a security threat is detected, the interceptor blocks the request and denies it with 403. In future versions, custom handling for denied requests will be supported.
 
 ## Performance
 
