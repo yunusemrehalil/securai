@@ -9,8 +9,6 @@ import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.SECUR
 import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.SECURITY_THREAT_DETECTED;
 import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.THREAD_INTERRUPTED;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 
 import com.nomaddeveloper.securai.annotation.Secured;
@@ -20,7 +18,6 @@ import com.nomaddeveloper.securai.internal.helper.XSSClassifierHelper;
 import com.nomaddeveloper.securai.internal.logger.SecuraiLogger;
 import com.nomaddeveloper.securai.internal.model.SecuraiResult;
 import com.nomaddeveloper.securai.internal.response.denied.DeniedResponse;
-import com.nomaddeveloper.securai.internal.response.denied.DeniedResponseImpl;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -41,31 +38,21 @@ public class SecuraiInterceptor implements Interceptor {
     private static final String TAG = SecuraiInterceptor.class.getSimpleName();
     private static final long LATCH_TIMEOUT = 5L;
     private static final int DEFAULT_LATCH_COUNT = 1;
-    private static final float DEFAULT_XSS_SECURITY_THRESHOLD = 0.8f;
     private final XSSClassifierHelper xssClassifierHelper;
     private final DeniedResponse deniedResponse;
 
     /**
-     * Constructs a new SecuraiInterceptor with custom xss security threshold.
+     * Constructs a new {@code SecuraiInterceptor} using the provided {@link SecuraiInterceptorBuilder}.
+     * This constructor initializes the interceptor with the configuration specified in the builder,
+     * including setting up logging, initializing the XSS classifier, and configuring the denied response handler.
      *
-     * @param context              The application context.
-     * @param loggingEnabled       {@code true} to enable logging, {@code false} to disable it.
-     * @param xssSecurityThreshold The security threshold, must be between 0 and 1.
+     * @param builder The {@link SecuraiInterceptorBuilder} containing the configuration for this interceptor.
+     *                Must not be null.
      */
-    public SecuraiInterceptor(@NonNull Context context, boolean loggingEnabled, float xssSecurityThreshold) {
-        SecuraiLogger.setLoggingEnabled(loggingEnabled);
-        this.xssClassifierHelper = new XSSClassifierHelper(context, xssSecurityThreshold);
-        this.deniedResponse = new DeniedResponseImpl();
-    }
-
-    /**
-     * Constructs a new SecuraiInterceptor with default xss security threshold.
-     *
-     * @param context        The application context.
-     * @param loggingEnabled {@code true} to enable logging, {@code false} to disable it.
-     */
-    public SecuraiInterceptor(@NonNull Context context, boolean loggingEnabled) {
-        this(context, loggingEnabled, DEFAULT_XSS_SECURITY_THRESHOLD);
+    SecuraiInterceptor(@NonNull SecuraiInterceptorBuilder builder) {
+        SecuraiLogger.setLoggingEnabled(builder.isLoggingEnabled());
+        this.xssClassifierHelper = new XSSClassifierHelper(builder.getContext(), builder.getThreshold());
+        this.deniedResponse = builder.getDeniedResponse();
     }
 
     @NonNull
