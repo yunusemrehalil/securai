@@ -4,6 +4,8 @@ import static com.nomaddeveloper.securai.internal.model.SecuraiError.SECURITY_TH
 
 import androidx.annotation.RestrictTo;
 
+import com.nomaddeveloper.securai.DeniedResponse;
+
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;

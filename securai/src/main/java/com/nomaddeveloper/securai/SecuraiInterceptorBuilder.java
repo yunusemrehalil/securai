@@ -7,7 +7,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.nomaddeveloper.securai.internal.response.denied.DeniedResponse;
 import com.nomaddeveloper.securai.internal.response.denied.DeniedResponseImpl;
 import com.nomaddeveloper.securai.internal.exception.SecuraiException;
 

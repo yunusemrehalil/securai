@@ -17,7 +17,6 @@ import com.nomaddeveloper.securai.internal.callback.ClassifyListenerImpl;
 import com.nomaddeveloper.securai.internal.helper.XSSClassifierHelper;
 import com.nomaddeveloper.securai.internal.logger.SecuraiLogger;
 import com.nomaddeveloper.securai.internal.model.SecuraiResult;
-import com.nomaddeveloper.securai.internal.response.denied.DeniedResponse;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;

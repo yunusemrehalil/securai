@@ -1,6 +1,4 @@
-package com.nomaddeveloper.securai.internal.response.denied;
-
-import androidx.annotation.RestrictTo;
+package com.nomaddeveloper.securai;
 
 import okhttp3.Request;
 import okhttp3.ResponseBody;
@@ -10,7 +8,6 @@ import retrofit2.Response;
  * Interface defining methods for handling various request denial scenarios.
  * Implementations create and return Retrofit Response objects with appropriate error details.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public interface DeniedResponse {
 
     /**
