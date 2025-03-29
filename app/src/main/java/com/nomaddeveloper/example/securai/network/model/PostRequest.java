@@ -5,7 +5,7 @@ public class PostRequest {
     private String body;
     private int userId;
 
-    public PostRequest(String title, String body, int userId) {
+    public PostRequest(final String title, final String body, final int userId) {
         this.title = title;
         this.body = body;
         this.userId = userId;
@@ -15,7 +15,7 @@ public class PostRequest {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -23,7 +23,7 @@ public class PostRequest {
         return body;
     }
 
-    public void setBody(String body) {
+    public void setBody(final String body) {
         this.body = body;
     }
 
@@ -31,7 +31,7 @@ public class PostRequest {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(final int userId) {
         this.userId = userId;
     }
 }

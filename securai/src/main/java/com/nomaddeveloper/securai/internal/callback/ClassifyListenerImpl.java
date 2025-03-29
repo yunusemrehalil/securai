@@ -34,7 +34,7 @@ public class ClassifyListenerImpl implements ClassifyListener {
      * @param latch  A {@link CountDownLatch} used to signal the completion of classification.
      * @param result An {@link AtomicReference} used to store the classification result.
      */
-    public ClassifyListenerImpl(CountDownLatch latch, AtomicReference<SecuraiResult> result) {
+    public ClassifyListenerImpl(final CountDownLatch latch, final AtomicReference<SecuraiResult> result) {
         this.latch = latch;
         this.result = result;
     }
@@ -68,7 +68,7 @@ public class ClassifyListenerImpl implements ClassifyListener {
      * @param threat A string describing the detected security threat.
      */
     @Override
-    public void onThreatDetected(Field field, String threat) {
+    public void onThreatDetected(final Field field, final String threat) {
         SecuraiLogger.error(TAG, SECURITY_THREAT_DETECTED.getMessage() + " in " + field + ": " + threat);
         result.set(new SecuraiResult(true, threat));
         latch.countDown();
@@ -84,7 +84,7 @@ public class ClassifyListenerImpl implements ClassifyListener {
      *                The inner map's values are {@link TextClassifierResult} objects, containing the classification results for each text segment.
      */
     @Override
-    public void onResult(Map<Field, Map<String, TextClassifierResult>> results) {
+    public void onResult(final Map<Field, Map<String, TextClassifierResult>> results) {
         result.set(new SecuraiResult(false, NO_THREAT_DETECTED));
         latch.countDown();
     }

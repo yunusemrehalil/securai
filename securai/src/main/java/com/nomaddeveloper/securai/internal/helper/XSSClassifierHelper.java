@@ -62,7 +62,7 @@ public class XSSClassifierHelper {
      *
      * @param context The application context used for loading the model.
      */
-    public XSSClassifierHelper(@NonNull Context context, float threshold) {
+    public XSSClassifierHelper(@NonNull final Context context, final float threshold) {
         this.context = context;
         this.threshold = threshold;
         initClassifier();
@@ -77,15 +77,15 @@ public class XSSClassifierHelper {
         if (xssClassifier != null) return;
         try {
             SecuraiLogger.debug(TAG, INITIALIZING.getMessage());
-            BaseOptions baseOptions = BaseOptions.builder()
+            final BaseOptions baseOptions = BaseOptions.builder()
                     .setModelAssetPath(XSS_MODEL)
                     .build();
-            TextClassifier.TextClassifierOptions options = TextClassifier.TextClassifierOptions.builder()
+            final TextClassifier.TextClassifierOptions options = TextClassifier.TextClassifierOptions.builder()
                     .setBaseOptions(baseOptions)
                     .build();
             xssClassifier = TextClassifier.createFromOptions(context, options);
             SecuraiLogger.info(TAG, INITIALIZED_SUCCESS.getMessage());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             SecuraiLogger.error(TAG, XSS_CLASSIFIER_INIT_FAILED.getMessage() + ": " + e.getMessage());
         }
     }
@@ -97,7 +97,7 @@ public class XSSClassifierHelper {
      * @param request          The {@link SecuraiRequest} containing the request data to be analyzed.
      * @param classifyListener The {@link ClassifyListener} that handles the classification results.
      */
-    public void classify(SecuraiRequest request, ClassifyListener classifyListener) {
+    public void classify(final SecuraiRequest request, final ClassifyListener classifyListener) {
         if (xssClassifier == null) {
             initClassifier();
             if (xssClassifier == null) {
@@ -111,10 +111,10 @@ public class XSSClassifierHelper {
             return;
         }
 
-        Map<Field, Map<String, TextClassifierResult>> results = new HashMap<>();
-        AtomicBoolean hasError = new AtomicBoolean(false);
+        final Map<Field, Map<String, TextClassifierResult>> results = new HashMap<>();
+        final AtomicBoolean hasError = new AtomicBoolean(false);
 
-        Consumer<String> errorHandler = (error) -> {
+        final Consumer<String> errorHandler = (error) -> {
             if (!hasError.get()) {
                 hasError.set(true);
                 classifyListener.onError(TAG, error);
@@ -132,8 +132,8 @@ public class XSSClassifierHelper {
 
         if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
             SecuraiLogger.debug(TAG, CLASSIFYING_HEADERS.getMessage());
-            for (Map.Entry<String, List<String>> header : request.getHeaders().entrySet()) {
-                for (String value : header.getValue()) {
+            for (final Map.Entry<String, List<String>> header : request.getHeaders().entrySet()) {
+                for (final String value : header.getValue()) {
                     if (isThreat(value, results, HEADER, errorHandler, classifyListener)) {
                         return;
                     }
@@ -145,7 +145,7 @@ public class XSSClassifierHelper {
 
         if (request.getQueryParameters() != null && !request.getQueryParameters().isEmpty()) {
             SecuraiLogger.debug(TAG, CLASSIFYING_PARAMS.getMessage());
-            for (Map.Entry<String, String> queryParameter : request.getQueryParameters().entrySet()) {
+            for (final Map.Entry<String, String> queryParameter : request.getQueryParameters().entrySet()) {
                 if (isThreat(queryParameter.getValue(), results, PARAM, errorHandler, classifyListener)) {
                     return;
                 }
@@ -154,7 +154,7 @@ public class XSSClassifierHelper {
 
         if (hasError.get()) return;
 
-        List<Long> timestamps = results.values().stream()
+        final List<Long> timestamps = results.values().stream()
                 .flatMap(map -> map.values().stream())
                 .map(TextClassifierResult::timestampMs)
                 .collect(Collectors.toList());
@@ -178,17 +178,17 @@ public class XSSClassifierHelper {
      * @param classifyListener The {@link ClassifyListener} used to notify security threats.
      * @return {@code true} if a security threat is detected, {@code false} otherwise.
      */
-    private boolean isThreat(String value,
-                             Map<Field, Map<String, TextClassifierResult>> results,
-                             Field field,
-                             Consumer<String> errorHandler,
-                             ClassifyListener classifyListener) {
+    private boolean isThreat(final String value,
+                             final Map<Field, Map<String, TextClassifierResult>> results,
+                             final Field field,
+                             final Consumer<String> errorHandler,
+                             final ClassifyListener classifyListener) {
         SecuraiLogger.debug(TAG, ANALYZING_VALUE.getMessage() + field + "]: " + value);
 
-        TextClassifierResult result;
+        final TextClassifierResult result;
         try {
             result = xssClassifier.classify(value);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             errorHandler.accept(NO_VALID_RESULT.getMessage() + value);
             return false;
         }
@@ -199,15 +199,15 @@ public class XSSClassifierHelper {
             return false;
         }
 
-        ClassificationResult classificationResult = result.classificationResult();
-        List<Category> categories = classificationResult.classifications().get(0).categories();
+        final ClassificationResult classificationResult = result.classificationResult();
+        final List<Category> categories = classificationResult.classifications().get(0).categories();
 
         if (categories.size() != CLASSIFICATION_RESULT_SIZE) {
             errorHandler.accept(UNEXPECTED_RESULT_SIZE.getMessage() + value);
             return false;
         }
 
-        float xssScore = categories.stream()
+        final float xssScore = categories.stream()
                 .filter(category -> category.index() == THREAT.getValue())
                 .map(Category::score)
                 .findFirst()

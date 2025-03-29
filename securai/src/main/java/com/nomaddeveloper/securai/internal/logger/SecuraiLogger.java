@@ -25,14 +25,14 @@ public final class SecuraiLogger {
      *
      * @param enabled `true` to enable logging, `false` to disable it.
      */
-    public static void setLoggingEnabled(boolean enabled) {
+    public static void setLoggingEnabled(final boolean enabled) {
         isLoggingEnabled = enabled;
     }
 
     /**
      * Logs a debug message.
      */
-    public static void debug(String tag, String message) {
+    public static void debug(final String tag, final String message) {
         if (!isLoggingEnabled || message == null) return;
         Log.d(formatTag(tag), message);
     }
@@ -40,7 +40,7 @@ public final class SecuraiLogger {
     /**
      * Logs an informational message.
      */
-    public static void info(String tag, String message) {
+    public static void info(final String tag, final String message) {
         if (!isLoggingEnabled || message == null) return;
         Log.i(formatTag(tag), message);
     }
@@ -48,7 +48,7 @@ public final class SecuraiLogger {
     /**
      * Logs a warning message.
      */
-    public static void warn(String tag, String message) {
+    public static void warn(final String tag, final String message) {
         if (!isLoggingEnabled || message == null) return;
         Log.w(formatTag(tag), message);
     }
@@ -56,7 +56,7 @@ public final class SecuraiLogger {
     /**
      * Logs an error message.
      */
-    public static void error(String tag, String message) {
+    public static void error(final String tag, final String message) {
         if (!isLoggingEnabled || message == null) return;
         Log.e(formatTag(tag), message);
     }
@@ -64,7 +64,7 @@ public final class SecuraiLogger {
     /**
      * Logs an error message with an exception.
      */
-    public static void error(String tag, String message, Throwable t) {
+    public static void error(final String tag, final String message, final Throwable t) {
         if (!isLoggingEnabled || message == null) return;
         Log.e(formatTag(tag), message, t);
     }
@@ -72,7 +72,7 @@ public final class SecuraiLogger {
     /**
      * Logs an exception with a default message.
      */
-    public static void error(String tag, Throwable t) {
+    public static void error(final String tag, final Throwable t) {
         if (!isLoggingEnabled || t == null) return;
         Log.e(formatTag(tag), EXCEPTION_PREFIX + t.getMessage(), t);
     }
@@ -80,7 +80,7 @@ public final class SecuraiLogger {
     /**
      * Formats the log tag consistently with the prefix.
      */
-    private static String formatTag(String tag) {
+    private static String formatTag(final String tag) {
         return tag == null || tag.isEmpty() ? TAG_PREFIX : String.format(TAG_FORMAT, TAG_PREFIX, tag);
     }
 }

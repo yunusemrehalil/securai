@@ -42,7 +42,7 @@ public class InterceptorHelper {
      * @param invocation The method invocation to inspect.
      * @return The Secured annotation if present, otherwise null.
      */
-    public static Secured getSecuredAnnotation(Invocation invocation) {
+    public static Secured getSecuredAnnotation(final Invocation invocation) {
         return Arrays.stream(invocation.method().getAnnotations())
                 .filter(annotation -> annotation instanceof Secured)
                 .map(annotation -> (Secured) annotation)
@@ -56,14 +56,14 @@ public class InterceptorHelper {
      * @param secured The Secured annotation containing the field definitions.
      * @return A set of fields to be analyzed, defaulting to ALL if invalid values are found.
      */
-    public static Set<Field> extractFields(Secured secured) {
-        Field[] fields = secured.fields();
+    public static Set<Field> extractFields(final Secured secured) {
+        final Field[] fields = secured.fields();
         if (fields.length == 0) {
             return EnumSet.of(Field.ALL);
         }
         try {
             return EnumSet.copyOf(Arrays.asList(fields));
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             SecuraiLogger.warn(TAG, "Invalid Field values in @Secured: " + Arrays.toString(fields) + ", defaulting to ALL");
             return EnumSet.of(Field.ALL);
         }
@@ -76,7 +76,7 @@ public class InterceptorHelper {
      * @param fields  The fields to extract (BODY, HEADER, PARAM, ALL)
      * @return A map of Field to their extracted values
      */
-    public static SecuraiRequest extractFieldValues(Request request, Set<Field> fields) {
+    public static SecuraiRequest extractFieldValues(final Request request, Set<Field> fields) {
         String body = null;
         Map<String, List<String>> headers = null;
         Map<String, String> queryParameters = null;
@@ -85,10 +85,10 @@ public class InterceptorHelper {
             fields = EnumSet.of(Field.BODY, Field.HEADER, Field.PARAM);
         }
 
-        for (Field field : fields) {
+        for (final Field field : fields) {
             switch (field) {
                 case BODY:
-                    RequestBody requestBody = request.body();
+                    final RequestBody requestBody = request.body();
                     if (requestBody == null) {
                         break;
                     }
@@ -102,22 +102,22 @@ public class InterceptorHelper {
                         requestBody.writeTo(buffer);
 
                         if ("gzip".equalsIgnoreCase(request.header("Content-Encoding"))) {
-                            try (GzipSource gzipSource = new GzipSource(buffer)) {
-                                Buffer unzippedBuffer = new Buffer();
+                            try (final GzipSource gzipSource = new GzipSource(buffer)) {
+                                final Buffer unzippedBuffer = new Buffer();
                                 unzippedBuffer.writeAll(gzipSource);
                                 buffer = unzippedBuffer;
                             }
                         }
 
-                        MediaType contentType = requestBody.contentType();
-                        Charset charset = contentType != null
+                        final MediaType contentType = requestBody.contentType();
+                        final Charset charset = contentType != null
                                 ? Objects.requireNonNullElse(contentType.charset(UTF_8), UTF_8)
                                 : UTF_8;
 
                         if (isProbablyUtf8(buffer)) {
                             body = buffer.readString(charset);
                         }
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         SecuraiLogger.error(TAG, "Failed to extract request body: ", e);
                     }
                     break;
@@ -129,7 +129,7 @@ public class InterceptorHelper {
                 case PARAM:
                     final Map<String, String> params = new HashMap<>();
                     request.url().queryParameterNames().forEach(name -> {
-                        String value = request.url().queryParameter(name);
+                        final String value = request.url().queryParameter(name);
                         params.put(name, value);
                     });
                     queryParameters = params;
@@ -150,22 +150,22 @@ public class InterceptorHelper {
      * @param buffer The buffer to check
      * @return True if probably UTF-8, false otherwise
      */
-    private static boolean isProbablyUtf8(Buffer buffer) {
+    private static boolean isProbablyUtf8(final Buffer buffer) {
         try {
-            Buffer prefix = new Buffer();
-            long byteCount = Math.min(buffer.size(), 64);
+            final Buffer prefix = new Buffer();
+            final long byteCount = Math.min(buffer.size(), 64);
             buffer.copyTo(prefix, 0, byteCount);
             for (int i = 0; i < 16; i++) {
                 if (prefix.exhausted()) {
                     break;
                 }
-                int codePoint = prefix.readUtf8CodePoint();
+                final int codePoint = prefix.readUtf8CodePoint();
                 if (Character.isISOControl(codePoint) && !Character.isWhitespace(codePoint)) {
                     return false;
                 }
             }
             return true;
-        } catch (EOFException e) {
+        } catch (final EOFException e) {
             return false; // Truncated UTF-8 sequence
         }
     }

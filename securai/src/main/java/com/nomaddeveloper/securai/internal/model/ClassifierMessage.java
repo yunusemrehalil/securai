@@ -21,7 +21,7 @@ public enum ClassifierMessage {
 
     private final String message;
 
-    ClassifierMessage(String message) {
+    ClassifierMessage(final String message) {
         this.message = message;
     }
 

@@ -7,8 +7,8 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.nomaddeveloper.securai.internal.response.denied.DeniedResponseImpl;
 import com.nomaddeveloper.securai.internal.exception.SecuraiException;
+import com.nomaddeveloper.securai.internal.response.denied.DeniedResponseImpl;
 
 import java.util.Objects;
 
@@ -24,7 +24,7 @@ public class SecuraiInterceptorBuilder {
     private final Context context;
     private boolean loggingEnabled = false;
     private float threshold = 0.8f;
-    private DeniedResponse deniedResponse;
+    private DeniedResponse deniedResponse = new DeniedResponseImpl();
 
     /**
      * Constructs a new {@code SecuraiInterceptorBuilder} with the given application context.
@@ -32,7 +32,7 @@ public class SecuraiInterceptorBuilder {
      * @param context The Android application context. Must not be null.
      * @throws NullPointerException if the provided context is null.
      */
-    public SecuraiInterceptorBuilder(@NonNull Context context) {
+    public SecuraiInterceptorBuilder(@NonNull final Context context) {
         this.context = Objects.requireNonNull(context, CONTEXT_MUST_NOT_BE_NULL.getMessage());
     }
 
@@ -44,7 +44,7 @@ public class SecuraiInterceptorBuilder {
      * @param loggingEnabled {@code true} to enable logging, {@code false} to disable. Defaults to {@code false}.
      * @return This {@code SecuraiInterceptorBuilder} instance for chaining method calls.
      */
-    public SecuraiInterceptorBuilder setLoggingEnabled(boolean loggingEnabled) {
+    public SecuraiInterceptorBuilder setLoggingEnabled(final boolean loggingEnabled) {
         this.loggingEnabled = loggingEnabled;
         return this;
     }
@@ -57,7 +57,7 @@ public class SecuraiInterceptorBuilder {
      * @return This {@code SecuraiInterceptorBuilder} instance for chaining method calls.
      * @throws SecuraiException if the provided threshold is not within the valid range (0 to 1).
      */
-    public SecuraiInterceptorBuilder setThreshold(float threshold) {
+    public SecuraiInterceptorBuilder setThreshold(final float threshold) {
         if (threshold < 0 || threshold > 1) {
             throw new SecuraiException(THRESHOLD_IS_NOT_IN_BOUND.getMessage());
         }
@@ -73,7 +73,7 @@ public class SecuraiInterceptorBuilder {
      * @param deniedResponse The custom {@link DeniedResponse} implementation. Can be null to use the default.
      * @return This {@code SecuraiInterceptorBuilder} instance for chaining method calls.
      */
-    public SecuraiInterceptorBuilder setDeniedResponse(DeniedResponse deniedResponse) {
+    public SecuraiInterceptorBuilder setDeniedResponse(final DeniedResponse deniedResponse) {
         this.deniedResponse = deniedResponse;
         return this;
     }
@@ -126,6 +126,6 @@ public class SecuraiInterceptorBuilder {
      * @return The configured {@link DeniedResponse} or a default instance.
      */
     DeniedResponse getDeniedResponse() {
-        return deniedResponse != null ? deniedResponse : new DeniedResponseImpl();
+        return deniedResponse;
     }
 }

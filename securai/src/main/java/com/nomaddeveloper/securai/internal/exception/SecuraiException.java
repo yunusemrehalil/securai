@@ -17,7 +17,7 @@ public class SecuraiException extends RuntimeException {
      * @param cause   The cause (which is saved for later retrieval by the {@link #getCause()} method).
      *                (A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or unknown.)
      */
-    public SecuraiException(String message, Throwable cause) {
+    public SecuraiException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
@@ -26,7 +26,7 @@ public class SecuraiException extends RuntimeException {
      *
      * @param message The detail message (which is saved for later retrieval by the {@link #getMessage()} method).
      */
-    public SecuraiException(String message) {
+    public SecuraiException(final String message) {
         super(message);
     }
 }
