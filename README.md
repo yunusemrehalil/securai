@@ -88,7 +88,7 @@ Have ideas or improvements? Feel free to open a pull request or create an issue 
 
 ## License
 
-The project's license information will be available soon in the [LICENSE.md](./LICENSE.md) file.
+[LICENSE](./LICENSE.md)
 
 ## Get in Touch
 
