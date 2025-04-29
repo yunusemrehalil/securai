@@ -6,11 +6,12 @@ Securai Interceptor is a smart security layer for OkHttp that helps keep your ne
 
 ### Features
 
--   **Catches XSS before it hits your server**: Uses AI to detect potential XSS threats in your requests before they reach your backend.
--   **Seamless Integration**: Works effortlessly with OkHttp and Retrofit, requiring minimal setup.
--   **Control which parts of your requests are checked**: The @Secured annotation lets you choose which parts of your requests should be analyzed.
--   **Optimized for ARM64**: Due to TensorFlow Lite model limitations, the library is designed to work on ARM64 devices and is not compatible with x86 Android Studio emulators. Testing must be performed on real ARM64 devices or compatible emulators.
--   **Fast and lightweight**: The embedded AI model is designed for speed, adding only **milliseconds** to request processing time.
+| Feature                        | Description                                                                                                                                          |
+|-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Smart XSS Protection**       | Securai Interceptor adds an extra layer of security to your OkHttp and Retrofit requests by scanning for potential XSS attacks before they reach your backend.|
+| **Embedded AI Model**          | It uses a lightweight, embedded AI model to detect suspicious input on the fly, with minimal impact on performance.|
+| **Field-Level Control**        | You can choose exactly which request fields to analyze using the `@Secured` annotation.|
+| **ARM64-Only Compatibility**   |  The interceptor is built specifically for ARM64 devices and isn’t compatible with x86-based Android Studio emulators, so testing needs to happen on real hardware or supported environments.|
 
 ## Installation
 
