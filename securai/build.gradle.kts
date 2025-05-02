@@ -45,7 +45,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.yunusemrehalil"
                 artifactId = "securai"
-                version = "1.0.0-beta"
+                version = "1.0.2-beta"
             }
         }
     }
