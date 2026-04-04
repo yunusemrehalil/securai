@@ -67,7 +67,6 @@ public class XSSClassifierHelper {
         this.context = context;
         this.threshold = threshold;
         this.logger = logger;
-        initClassifier();
     }
 
     /**
