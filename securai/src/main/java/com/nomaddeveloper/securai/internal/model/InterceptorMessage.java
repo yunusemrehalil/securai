@@ -8,11 +8,15 @@ import androidx.annotation.RestrictTo;
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public enum InterceptorMessage {
 
-    INITIAL_ERROR("Initial error"),
+    CLASSIFIER_ERROR("Classifier error. Proceeding request: "),
+    CLASSIFIER_ERROR_BLOCKED("Classifier error. Blocking request: "),
+    INITIAL_ERROR("Classification did not complete"),
     INTERCEPTING_REQUEST("Intercepting request: "),
     SECURITY_ANALYSIS_TIMEOUT("Security analysis timeout. Proceeding request: "),
+    SECURITY_ANALYSIS_TIMEOUT_BLOCKED("Security analysis timeout. Blocking request: "),
     SECURITY_THREAT_DETECTED("Security threat detected! Blocking request: "),
-    THREAD_INTERRUPTED("Interceptor thread interrupted.");
+    THREAD_INTERRUPTED("Interceptor thread interrupted. Proceeding request: "),
+    THREAD_INTERRUPTED_BLOCKED("Interceptor thread interrupted. Blocking request: ");
 
     private final String message;
 

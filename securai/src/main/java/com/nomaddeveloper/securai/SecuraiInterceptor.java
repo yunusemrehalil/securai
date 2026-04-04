@@ -3,11 +3,15 @@ package com.nomaddeveloper.securai;
 import static com.nomaddeveloper.securai.internal.helper.InterceptorHelper.extractFieldValues;
 import static com.nomaddeveloper.securai.internal.helper.InterceptorHelper.extractFields;
 import static com.nomaddeveloper.securai.internal.helper.InterceptorHelper.getSecuredAnnotation;
+import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.CLASSIFIER_ERROR;
+import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.CLASSIFIER_ERROR_BLOCKED;
 import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.INITIAL_ERROR;
 import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.INTERCEPTING_REQUEST;
 import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.SECURITY_ANALYSIS_TIMEOUT;
+import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.SECURITY_ANALYSIS_TIMEOUT_BLOCKED;
 import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.SECURITY_THREAT_DETECTED;
 import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.THREAD_INTERRUPTED;
+import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.THREAD_INTERRUPTED_BLOCKED;
 
 import androidx.annotation.NonNull;
 
@@ -39,6 +43,7 @@ public class SecuraiInterceptor implements Interceptor {
     private static final int DEFAULT_LATCH_COUNT = 1;
     private final XSSClassifierHelper xssClassifierHelper;
     private final DeniedResponse deniedResponse;
+    private final boolean failClosed;
 
     /**
      * Constructs a new {@code SecuraiInterceptor} using the provided {@link SecuraiInterceptorBuilder}.
@@ -52,6 +57,7 @@ public class SecuraiInterceptor implements Interceptor {
         SecuraiLogger.setLoggingEnabled(builder.isLoggingEnabled());
         this.xssClassifierHelper = new XSSClassifierHelper(builder.getContext(), builder.getThreshold());
         this.deniedResponse = builder.getDeniedResponse();
+        this.failClosed = builder.isFailClosed();
     }
 
     @NonNull
@@ -72,7 +78,7 @@ public class SecuraiInterceptor implements Interceptor {
         }
 
         final CountDownLatch latch = new CountDownLatch(DEFAULT_LATCH_COUNT);
-        final AtomicReference<SecuraiResult> result = new AtomicReference<>(new SecuraiResult(false, INITIAL_ERROR.getMessage()));
+        final AtomicReference<SecuraiResult> result = new AtomicReference<>(new SecuraiResult(false, true, INITIAL_ERROR.getMessage()));
 
         final ClassifyListener listener = new ClassifyListenerImpl(latch, result);
 
@@ -80,6 +86,10 @@ public class SecuraiInterceptor implements Interceptor {
 
         try {
             if (!latch.await(LATCH_TIMEOUT, TimeUnit.SECONDS)) {
+                if (failClosed) {
+                    SecuraiLogger.error(TAG, SECURITY_ANALYSIS_TIMEOUT_BLOCKED.getMessage() + request.url());
+                    return deniedResponse.onSecurityViolation(request, SECURITY_ANALYSIS_TIMEOUT_BLOCKED.getMessage());
+                }
                 SecuraiLogger.warn(TAG, SECURITY_ANALYSIS_TIMEOUT.getMessage() + request.url());
                 return chain.proceed(request);
             }
@@ -89,10 +99,22 @@ public class SecuraiInterceptor implements Interceptor {
                 return deniedResponse.onSecurityViolation(request, result.get().value());
             }
 
+            if (result.get().hasError()) {
+                if (failClosed) {
+                    SecuraiLogger.error(TAG, CLASSIFIER_ERROR_BLOCKED.getMessage() + request.url());
+                    return deniedResponse.onSecurityViolation(request, result.get().value());
+                }
+                SecuraiLogger.warn(TAG, CLASSIFIER_ERROR.getMessage() + request.url());
+            }
+
             return chain.proceed(request);
         } catch (final InterruptedException interruptedException) {
             Thread.currentThread().interrupt();
-            SecuraiLogger.error(TAG, THREAD_INTERRUPTED.getMessage(), interruptedException);
+            if (failClosed) {
+                SecuraiLogger.error(TAG, THREAD_INTERRUPTED_BLOCKED.getMessage() + request.url(), interruptedException);
+                return deniedResponse.onSecurityViolation(request, THREAD_INTERRUPTED_BLOCKED.getMessage());
+            }
+            SecuraiLogger.error(TAG, THREAD_INTERRUPTED.getMessage() + request.url(), interruptedException);
             return chain.proceed(request);
         }
     }

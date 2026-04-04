@@ -24,6 +24,7 @@ public class SecuraiInterceptorBuilder {
     private final Context context;
     private boolean loggingEnabled = false;
     private float threshold = 0.8f;
+    private boolean failClosed = true;
     private DeniedResponse deniedResponse = new DeniedResponseImpl();
 
     /**
@@ -62,6 +63,23 @@ public class SecuraiInterceptorBuilder {
             throw new SecuraiException(THRESHOLD_IS_NOT_IN_BOUND.getMessage());
         }
         this.threshold = threshold;
+        return this;
+    }
+
+    /**
+     * Configures whether the interceptor should fail-closed or fail-open on errors.
+     * <p>
+     * When {@code true} (default), any failure during security analysis (timeout, thread interruption,
+     * or classifier error) will result in the request being denied with a blocked response.
+     * When {@code false}, the interceptor will allow the request to proceed on failure (fail-open).
+     * <p>
+     * For security-sensitive applications, it is strongly recommended to keep this set to {@code true}.
+     *
+     * @param failClosed {@code true} to deny requests on failure, {@code false} to allow them. Defaults to {@code true}.
+     * @return This {@code SecuraiInterceptorBuilder} instance for chaining method calls.
+     */
+    public SecuraiInterceptorBuilder setFailClosed(final boolean failClosed) {
+        this.failClosed = failClosed;
         return this;
     }
 
@@ -127,5 +145,15 @@ public class SecuraiInterceptorBuilder {
      */
     DeniedResponse getDeniedResponse() {
         return deniedResponse;
+    }
+
+    /**
+     * Retrieves the fail-closed setting configured in this builder.
+     * This method is intended for internal use by the {@link SecuraiInterceptor}.
+     *
+     * @return {@code true} if the interceptor should deny requests on failure, {@code false} otherwise.
+     */
+    boolean isFailClosed() {
+        return failClosed;
     }
 }

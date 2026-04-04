@@ -55,7 +55,7 @@ public class ClassifyListenerImpl implements ClassifyListener {
             tag = TAG;
         }
         SecuraiLogger.error(tag, error);
-        result.set(new SecuraiResult(false, ERROR_PREFIX + error));
+        result.set(new SecuraiResult(false, true, ERROR_PREFIX + error));
         latch.countDown();
     }
 
@@ -70,7 +70,7 @@ public class ClassifyListenerImpl implements ClassifyListener {
     @Override
     public void onThreatDetected(final Field field, final String threat) {
         SecuraiLogger.error(TAG, SECURITY_THREAT_DETECTED.getMessage() + " in " + field + ": " + threat);
-        result.set(new SecuraiResult(true, threat));
+        result.set(new SecuraiResult(true, false, threat));
         latch.countDown();
     }
 
@@ -85,7 +85,7 @@ public class ClassifyListenerImpl implements ClassifyListener {
      */
     @Override
     public void onResult(final Map<Field, Map<String, TextClassifierResult>> results) {
-        result.set(new SecuraiResult(false, NO_THREAT_DETECTED));
+        result.set(new SecuraiResult(false, false, NO_THREAT_DETECTED));
         latch.countDown();
     }
 }
