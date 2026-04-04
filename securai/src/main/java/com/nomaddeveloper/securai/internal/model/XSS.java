@@ -8,15 +8,7 @@ import androidx.annotation.RestrictTo;
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public enum XSS {
 
-    /**
-     * Indicates that the request contains an XSS threat.
-     */
-    THREAT(1),
-
-    /**
-     * Indicates that the request does not contain an XSS threat.
-     */
-    NOT_THREAT(0);
+    THREAT(1);
 
     private final int value;
 
@@ -32,7 +24,7 @@ public enum XSS {
     /**
      * Retrieves the integer value associated with the classification.
      *
-     * @return The classification value (1 for THREAT, 0 for NOT_THREAT).
+     * @return The classification value (1 for THREAT).
      */
     public int getValue() {
         return value;

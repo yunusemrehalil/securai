@@ -13,11 +13,10 @@ public enum ClassifierMessage {
     CLASSIFYING_BODY("Classifying request body..."),
     CLASSIFYING_HEADERS("Classifying request headers..."),
     CLASSIFYING_PARAMS("Classifying request query parameters..."),
-    CLASSIFICATION_SUCCESS("Request classified successfully. No threats detected. Classification timestamps: "),
+    CLASSIFICATION_SUCCESS("Request classified successfully. No threats detected."),
     NO_VALID_RESULT("No valid classification result for value: "),
     UNEXPECTED_RESULT_SIZE("Unexpected classification result size for value: "),
-    ANALYZING_VALUE("Analyzing value in field ["),
-    THREAT_DETECTED("Threat detected in value: ");
+    ANALYZING_VALUE("Analyzing value in field [");
 
     private final String message;
 

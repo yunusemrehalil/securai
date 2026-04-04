@@ -10,9 +10,7 @@ import com.nomaddeveloper.securai.internal.exception.SecuraiException;
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public enum SecuraiError {
 
-    UNKNOWN_ERROR("Unknown classification error occurred."),
     XSS_CLASSIFIER_INIT_FAILED("Failed to initialize XSS classifier."),
-    THREAD_INTERRUPTED("Thread interrupted while waiting for XSS classification."),
     XSS_CLASSIFIER_NOT_INITIALIZED("XSS classifier is not initialized."),
     NO_FIELD_VALUE_PROVIDED("No field value provided for classification."),
     XSS_CATEGORY_MISSING("Category with index '1' (XSS) not found."),
@@ -30,11 +28,4 @@ public enum SecuraiError {
         return message;
     }
 
-    public SecuraiException toException() {
-        return new SecuraiException(message);
-    }
-
-    public SecuraiException toException(final Throwable cause) {
-        return new SecuraiException(message, cause);
-    }
 }

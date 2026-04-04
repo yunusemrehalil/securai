@@ -69,7 +69,7 @@ public class SecuraiInterceptorBuilder {
     /**
      * Configures whether the interceptor should fail-closed or fail-open on errors.
      * <p>
-     * When {@code true} (default), any failure during security analysis (timeout, thread interruption,
+     * When {@code true} (default), any failure during security analysis (e.g., classifier initialization failure,
      * or classifier error) will result in the request being denied with a blocked response.
      * When {@code false}, the interceptor will allow the request to proceed on failure (fail-open).
      * <p>
@@ -92,7 +92,7 @@ public class SecuraiInterceptorBuilder {
      * @return This {@code SecuraiInterceptorBuilder} instance for chaining method calls.
      */
     public SecuraiInterceptorBuilder setDeniedResponse(final DeniedResponse deniedResponse) {
-        this.deniedResponse = deniedResponse;
+        this.deniedResponse = deniedResponse != null ? deniedResponse : new DeniedResponseImpl();
         return this;
     }
 
