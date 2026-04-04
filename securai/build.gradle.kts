@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.retrofit)
     //Test
     testImplementation(libs.junit)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
