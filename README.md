@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.yunusemrehalil:securai:1.0.2-beta")
+    implementation("com.github.yunusemrehalil:securai:2.0.0-beta")
 }
 ```
 
@@ -51,6 +51,7 @@ Register `SecuraiInterceptor` in your OkHttp client to enforce security validati
 SecuraiInterceptor interceptor = new SecuraiInterceptorBuilder(context)
         .setLoggingEnabled(true)  // Enable logging
         .setThreshold(0.75f)      // Custom security threshold
+        .setFailClosed(true)      // Secure default: blocks requests on classifier errors
         .setDeniedResponse(new CustomDeniedResponse()) // Custom response handling
         .build();
 
@@ -77,6 +78,7 @@ To be filled after.
 - Extracts request data (body, headers, parameters).
 - Uses an AI-powered XSS classifier to analyze the request.
 - Blocks requests containing security threats.
+- Fails-closed by default, aggressively blocking requests if the classifier fails to initialize or operate.
 
 ### **@Secured Annotation**
 
