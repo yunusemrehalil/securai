@@ -86,7 +86,7 @@ public class SecuraiInterceptor implements Interceptor {
 
             if (result.get().threatDetected()) {
                 SecuraiLogger.error(TAG, SECURITY_THREAT_DETECTED.getMessage() + request.url());
-                return deniedResponse.onSecurityViolation(request, result.get().value()).raw();
+                return deniedResponse.onSecurityViolation(request, result.get().value());
             }
 
             return chain.proceed(request);

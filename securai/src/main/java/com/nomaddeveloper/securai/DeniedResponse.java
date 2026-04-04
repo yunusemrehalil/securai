@@ -1,12 +1,11 @@
 package com.nomaddeveloper.securai;
 
 import okhttp3.Request;
-import okhttp3.ResponseBody;
-import retrofit2.Response;
+import okhttp3.Response;
 
 /**
  * Interface defining methods for handling various request denial scenarios.
- * Implementations create and return Retrofit Response objects with appropriate error details.
+ * Implementations create and return OkHttp Response objects with appropriate error details.
  */
 public interface DeniedResponse {
 
@@ -15,7 +14,7 @@ public interface DeniedResponse {
      *
      * @param request The original request
      * @param summary Summary of the detected vulnerability
-     * @return Retrofit Response with error details
+     * @return OkHttp Response with error details
      */
-    Response<ResponseBody> onSecurityViolation(Request request, String summary);
+    Response onSecurityViolation(Request request, String summary);
 }

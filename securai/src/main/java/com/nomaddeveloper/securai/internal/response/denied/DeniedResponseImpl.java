@@ -9,8 +9,8 @@ import com.nomaddeveloper.securai.DeniedResponse;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
-import retrofit2.Response;
 
 /**
  * Default implementation of DeniedResponse that creates error responses and logs events.
@@ -26,28 +26,26 @@ public class DeniedResponseImpl implements DeniedResponse {
      * Logs a warning and returns a 403 response.
      */
     @Override
-    public Response<ResponseBody> onSecurityViolation(final Request request, final String summary) {
+    public Response onSecurityViolation(final Request request, final String summary) {
         return createErrorResponse(request, 403, SECURITY_THREAT_DETECTED.getMessage());
     }
 
     /**
-     * Creates a Retrofit error response with the specified code and message.
+     * Creates an OkHttp error response with the specified code and message.
      *
      * @param request The original request
      * @param code    HTTP status code
      * @param message Error message
-     * @return Retrofit Response with error details
+     * @return OkHttp Response with error details
      */
-    protected Response<ResponseBody> createErrorResponse(final Request request, final int code, final String message) {
+    protected Response createErrorResponse(final Request request, final int code, final String message) {
         final ResponseBody errorBody = ResponseBody.Companion.create(message, MediaType.get("text/plain"));
-        final okhttp3.Response rawResponse = new okhttp3.Response.Builder()
+        return new Response.Builder()
                 .request(request)
                 .code(code)
                 .protocol(Protocol.HTTP_1_1)
                 .message(message)
                 .body(errorBody)
                 .build();
-
-        return Response.error(errorBody, rawResponse);
     }
 }
