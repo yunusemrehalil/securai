@@ -1,6 +1,6 @@
 package com.nomaddeveloper.securai.internal.response.denied;
 
-import static com.nomaddeveloper.securai.internal.model.SecuraiError.SECURITY_THREAT_DETECTED;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.SECURITY_THREAT_DETECTED;
 
 import androidx.annotation.RestrictTo;
 
@@ -19,7 +19,6 @@ import okhttp3.ResponseBody;
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class DeniedResponseImpl implements DeniedResponse {
 
-    private static final String TAG = DeniedResponseImpl.class.getSimpleName();
 
     /**
      * Handles requests blocked due to security vulnerabilities.
@@ -27,7 +26,7 @@ public class DeniedResponseImpl implements DeniedResponse {
      */
     @Override
     public Response onSecurityViolation(final Request request, final String summary) {
-        return createErrorResponse(request, 403, SECURITY_THREAT_DETECTED.getMessage());
+        return createErrorResponse(request, 403, SECURITY_THREAT_DETECTED);
     }
 
     /**

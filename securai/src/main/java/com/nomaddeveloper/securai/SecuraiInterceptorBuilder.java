@@ -1,7 +1,7 @@
 package com.nomaddeveloper.securai;
 
-import static com.nomaddeveloper.securai.internal.model.SecuraiError.CONTEXT_MUST_NOT_BE_NULL;
-import static com.nomaddeveloper.securai.internal.model.SecuraiError.THRESHOLD_IS_NOT_IN_BOUND;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.CONTEXT_MUST_NOT_BE_NULL;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.THRESHOLD_IS_NOT_IN_BOUND;
 
 import android.content.Context;
 
@@ -34,7 +34,7 @@ public class SecuraiInterceptorBuilder {
      * @throws NullPointerException if the provided context is null.
      */
     public SecuraiInterceptorBuilder(@NonNull final Context context) {
-        this.context = Objects.requireNonNull(context, CONTEXT_MUST_NOT_BE_NULL.getMessage());
+        this.context = Objects.requireNonNull(context, CONTEXT_MUST_NOT_BE_NULL);
     }
 
     /**
@@ -60,7 +60,7 @@ public class SecuraiInterceptorBuilder {
      */
     public SecuraiInterceptorBuilder setThreshold(final float threshold) {
         if (threshold < 0 || threshold > 1) {
-            throw new SecuraiException(THRESHOLD_IS_NOT_IN_BOUND.getMessage());
+            throw new SecuraiException(THRESHOLD_IS_NOT_IN_BOUND);
         }
         this.threshold = threshold;
         return this;

@@ -1,22 +1,23 @@
 package com.nomaddeveloper.securai.internal.helper;
 
-import static com.nomaddeveloper.securai.internal.model.ClassifierMessage.ANALYZING_VALUE;
-import static com.nomaddeveloper.securai.internal.model.ClassifierMessage.CLASSIFICATION_SUCCESS;
-import static com.nomaddeveloper.securai.internal.model.ClassifierMessage.CLASSIFYING_BODY;
-import static com.nomaddeveloper.securai.internal.model.ClassifierMessage.CLASSIFYING_HEADERS;
-import static com.nomaddeveloper.securai.internal.model.ClassifierMessage.CLASSIFYING_PARAMS;
-import static com.nomaddeveloper.securai.internal.model.ClassifierMessage.INITIALIZED_SUCCESS;
-import static com.nomaddeveloper.securai.internal.model.ClassifierMessage.INITIALIZING;
-import static com.nomaddeveloper.securai.internal.model.ClassifierMessage.NO_VALID_RESULT;
-import static com.nomaddeveloper.securai.internal.model.ClassifierMessage.UNEXPECTED_RESULT_SIZE;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.ANALYZING_VALUE;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.CLASSIFICATION_SUCCESS;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.CLASSIFYING_BODY;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.CLASSIFYING_HEADERS;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.CLASSIFYING_PARAMS;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.INITIALIZED_SUCCESS;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.INITIALIZING;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.NO_FIELD_VALUE_PROVIDED;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.NO_THREAT_DETECTED;
 import static com.nomaddeveloper.securai.internal.model.Field.BODY;
 import static com.nomaddeveloper.securai.internal.model.Field.HEADER;
 import static com.nomaddeveloper.securai.internal.model.Field.PARAM;
-import static com.nomaddeveloper.securai.internal.model.SecuraiError.NO_FIELD_VALUE_PROVIDED;
-import static com.nomaddeveloper.securai.internal.model.SecuraiError.SECURITY_THREAT_DETECTED;
-import static com.nomaddeveloper.securai.internal.model.SecuraiError.XSS_CATEGORY_MISSING;
-import static com.nomaddeveloper.securai.internal.model.SecuraiError.XSS_CLASSIFIER_INIT_FAILED;
-import static com.nomaddeveloper.securai.internal.model.SecuraiError.XSS_CLASSIFIER_NOT_INITIALIZED;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.NO_VALID_RESULT;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.SECURITY_THREAT_DETECTED;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.UNEXPECTED_RESULT_SIZE;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.XSS_CATEGORY_MISSING;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.XSS_CLASSIFIER_INIT_FAILED;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.XSS_CLASSIFIER_NOT_INITIALIZED;
 import static com.nomaddeveloper.securai.internal.model.XSS.THREAT;
 
 import android.content.Context;
@@ -52,16 +53,20 @@ public class XSSClassifierHelper {
     private final Context context;
     private final float threshold;
     private TextClassifier xssClassifier;
+    private final SecuraiLogger logger;
 
 
     /**
-     * Constructs an {@code XSSClassifierHelper} instance and initializes the classifier.
+     * Constructs a new XSSClassifierHelper.
      *
-     * @param context The application context used for loading the model.
+     * @param context   The application context, used to initialize the ML classifier.
+     * @param threshold The classification score threshold above which a value is considered a threat.
+     * @param logger    The logger instance.
      */
-    public XSSClassifierHelper(@NonNull final Context context, final float threshold) {
+    public XSSClassifierHelper(@NonNull final Context context, final float threshold, final SecuraiLogger logger) {
         this.context = context;
         this.threshold = threshold;
+        this.logger = logger;
         initClassifier();
     }
 
@@ -73,7 +78,7 @@ public class XSSClassifierHelper {
     public synchronized void initClassifier() {
         if (xssClassifier != null) return;
         try {
-            SecuraiLogger.debug(TAG, INITIALIZING.getMessage());
+            logger.debug(TAG, INITIALIZING);
             final BaseOptions baseOptions = BaseOptions.builder()
                     .setModelAssetPath(XSS_MODEL)
                     .build();
@@ -81,9 +86,9 @@ public class XSSClassifierHelper {
                     .setBaseOptions(baseOptions)
                     .build();
             xssClassifier = TextClassifier.createFromOptions(context, options);
-            SecuraiLogger.info(TAG, INITIALIZED_SUCCESS.getMessage());
+            logger.info(TAG, INITIALIZED_SUCCESS);
         } catch (final Exception e) {
-            SecuraiLogger.error(TAG, XSS_CLASSIFIER_INIT_FAILED.getMessage() + ": " + e.getMessage());
+            logger.error(TAG, XSS_CLASSIFIER_INIT_FAILED + ": " + e.getMessage());
         }
     }
 
@@ -98,25 +103,25 @@ public class XSSClassifierHelper {
         if (xssClassifier == null) {
             initClassifier();
             if (xssClassifier == null) {
-                SecuraiLogger.error(TAG, XSS_CLASSIFIER_NOT_INITIALIZED.getMessage());
-                return new SecuraiResult(false, true, XSS_CLASSIFIER_NOT_INITIALIZED.getMessage());
+                logger.error(TAG, XSS_CLASSIFIER_NOT_INITIALIZED);
+                return new SecuraiResult(false, true, XSS_CLASSIFIER_NOT_INITIALIZED);
             }
         }
 
         if (request == null) {
-            SecuraiLogger.error(TAG, NO_FIELD_VALUE_PROVIDED.getMessage());
-            return new SecuraiResult(false, true, NO_FIELD_VALUE_PROVIDED.getMessage());
+            logger.error(TAG, NO_FIELD_VALUE_PROVIDED);
+            return new SecuraiResult(false, true, NO_FIELD_VALUE_PROVIDED);
         }
 
-        if (request.getBody() != null && !request.getBody().isEmpty()) {
-            SecuraiLogger.debug(TAG, CLASSIFYING_BODY.getMessage());
-            final SecuraiResult result = isThreat(request.getBody(), BODY);
+        if (request.body() != null && !request.body().isEmpty()) {
+            logger.debug(TAG, CLASSIFYING_BODY);
+            final SecuraiResult result = isThreat(request.body(), BODY);
             if (result != null) return result;
         }
 
-        if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
-            SecuraiLogger.debug(TAG, CLASSIFYING_HEADERS.getMessage());
-            for (final Map.Entry<String, List<String>> header : request.getHeaders().entrySet()) {
+        if (request.headers() != null && !request.headers().isEmpty()) {
+            logger.debug(TAG, CLASSIFYING_HEADERS);
+            for (final Map.Entry<String, List<String>> header : request.headers().entrySet()) {
                 for (final String value : header.getValue()) {
                     final SecuraiResult result = isThreat(value, HEADER);
                     if (result != null) return result;
@@ -124,16 +129,16 @@ public class XSSClassifierHelper {
             }
         }
 
-        if (request.getQueryParameters() != null && !request.getQueryParameters().isEmpty()) {
-            SecuraiLogger.debug(TAG, CLASSIFYING_PARAMS.getMessage());
-            for (final Map.Entry<String, String> queryParameter : request.getQueryParameters().entrySet()) {
+        if (request.queryParameters() != null && !request.queryParameters().isEmpty()) {
+            logger.debug(TAG, CLASSIFYING_PARAMS);
+            for (final Map.Entry<String, String> queryParameter : request.queryParameters().entrySet()) {
                 final SecuraiResult result = isThreat(queryParameter.getValue(), PARAM);
                 if (result != null) return result;
             }
         }
 
-        SecuraiLogger.info(TAG, CLASSIFICATION_SUCCESS.getMessage());
-        return new SecuraiResult(false, false, "No threat detected.");
+        logger.info(TAG, CLASSIFICATION_SUCCESS);
+        return new SecuraiResult(false, false, NO_THREAT_DETECTED);
     }
 
     /**
@@ -147,21 +152,21 @@ public class XSSClassifierHelper {
      * @return A {@link SecuraiResult} if a threat or error is detected, or {@code null} if clean.
      */
     private SecuraiResult isThreat(final String value, final Field field) {
-        SecuraiLogger.debug(TAG, ANALYZING_VALUE.getMessage() + field + "]: " + value);
+        logger.debug(TAG, ANALYZING_VALUE + field + "]: " + value);
 
         final TextClassifierResult result;
         try {
             result = xssClassifier.classify(value);
         } catch (final Exception e) {
-            final String error = NO_VALID_RESULT.getMessage() + value;
-            SecuraiLogger.error(TAG, error);
+            final String error = NO_VALID_RESULT + value;
+            logger.error(TAG, error);
             return new SecuraiResult(false, true, error);
         }
 
         if (result == null || result.classificationResult() == null ||
                 result.classificationResult().classifications().isEmpty()) {
-            final String error = NO_VALID_RESULT.getMessage() + value;
-            SecuraiLogger.error(TAG, error);
+            final String error = NO_VALID_RESULT + value;
+            logger.error(TAG, error);
             return new SecuraiResult(false, true, error);
         }
 
@@ -169,8 +174,8 @@ public class XSSClassifierHelper {
         final List<Category> categories = classificationResult.classifications().get(0).categories();
 
         if (categories.size() != CLASSIFICATION_RESULT_SIZE) {
-            final String error = UNEXPECTED_RESULT_SIZE.getMessage() + value;
-            SecuraiLogger.error(TAG, error);
+            final String error = UNEXPECTED_RESULT_SIZE + value;
+            logger.error(TAG, error);
             return new SecuraiResult(false, true, error);
         }
 
@@ -181,13 +186,13 @@ public class XSSClassifierHelper {
                 .orElse(DEFAULT_XSS_SCORE);
 
         if (xssScore == DEFAULT_XSS_SCORE) {
-            final String error = XSS_CATEGORY_MISSING.getMessage() + ": " + value;
-            SecuraiLogger.error(TAG, error);
+            final String error = XSS_CATEGORY_MISSING + ": " + value;
+            logger.error(TAG, error);
             return new SecuraiResult(false, true, error);
         }
 
         if (xssScore > threshold) {
-            SecuraiLogger.error(TAG, SECURITY_THREAT_DETECTED.getMessage() + " in " + field + ": " + value);
+            logger.error(TAG, SECURITY_THREAT_DETECTED + " in " + field + ": " + value);
             return new SecuraiResult(true, false, value);
         }
 

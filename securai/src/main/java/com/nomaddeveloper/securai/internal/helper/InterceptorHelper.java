@@ -43,11 +43,7 @@ public class InterceptorHelper {
      * @return The Secured annotation if present, otherwise null.
      */
     public static Secured getSecuredAnnotation(final Invocation invocation) {
-        return Arrays.stream(invocation.method().getAnnotations())
-                .filter(annotation -> annotation instanceof Secured)
-                .map(annotation -> (Secured) annotation)
-                .findFirst()
-                .orElse(null);
+        return invocation.method().getAnnotation(Secured.class);
     }
 
     /**
@@ -56,7 +52,7 @@ public class InterceptorHelper {
      * @param secured The Secured annotation containing the field definitions.
      * @return A set of fields to be analyzed, defaulting to ALL if invalid values are found.
      */
-    public static Set<Field> extractFields(final Secured secured) {
+    public static Set<Field> extractFields(final Secured secured, final SecuraiLogger logger) {
         final Field[] fields = secured.fields();
         if (fields.length == 0) {
             return EnumSet.of(Field.ALL);
@@ -64,7 +60,7 @@ public class InterceptorHelper {
         try {
             return EnumSet.copyOf(Arrays.asList(fields));
         } catch (final IllegalArgumentException e) {
-            SecuraiLogger.warn(TAG, "Invalid Field values in @Secured: " + Arrays.toString(fields) + ", defaulting to ALL");
+            logger.warn(TAG, "Invalid Field values in @Secured: " + Arrays.toString(fields) + ", defaulting to ALL");
             return EnumSet.of(Field.ALL);
         }
     }
@@ -74,18 +70,19 @@ public class InterceptorHelper {
      *
      * @param request The OkHttp Request to analyze
      * @param fields  The fields to extract (BODY, HEADER, PARAM, ALL)
+     * @param logger  The logger instance
      * @return A map of Field to their extracted values
      */
-    public static SecuraiRequest extractFieldValues(final Request request, Set<Field> fields) {
+    public static SecuraiRequest extractFieldValues(final Request request, final Set<Field> fields, final SecuraiLogger logger) {
         String body = null;
         Map<String, List<String>> headers = null;
         Map<String, String> queryParameters = null;
 
-        if (fields.contains(Field.ALL)) {
-            fields = EnumSet.of(Field.BODY, Field.HEADER, Field.PARAM);
-        }
+        final Set<Field> fieldsToProcess = fields.contains(Field.ALL) 
+                ? EnumSet.of(Field.BODY, Field.HEADER, Field.PARAM) 
+                : fields;
 
-        for (final Field field : fields) {
+        for (final Field field : fieldsToProcess) {
             switch (field) {
                 case BODY:
                     final RequestBody requestBody = request.body();
@@ -118,7 +115,7 @@ public class InterceptorHelper {
                             body = buffer.readString(charset);
                         }
                     } catch (final IOException e) {
-                        SecuraiLogger.error(TAG, "Failed to extract request body: ", e);
+                        logger.error(TAG, "Failed to extract request body: ", e);
                     }
                     break;
 
@@ -135,7 +132,7 @@ public class InterceptorHelper {
                     queryParameters = params;
                     break;
                 default:
-                    SecuraiLogger.warn(TAG, "Unknown field type: " + field);
+                    logger.warn(TAG, "Unknown field type: " + field);
                     break;
             }
         }

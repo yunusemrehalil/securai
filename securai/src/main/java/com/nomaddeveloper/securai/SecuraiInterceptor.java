@@ -3,10 +3,10 @@ package com.nomaddeveloper.securai;
 import static com.nomaddeveloper.securai.internal.helper.InterceptorHelper.extractFieldValues;
 import static com.nomaddeveloper.securai.internal.helper.InterceptorHelper.extractFields;
 import static com.nomaddeveloper.securai.internal.helper.InterceptorHelper.getSecuredAnnotation;
-import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.CLASSIFIER_ERROR;
-import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.CLASSIFIER_ERROR_BLOCKED;
-import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.INTERCEPTING_REQUEST;
-import static com.nomaddeveloper.securai.internal.model.InterceptorMessage.SECURITY_THREAT_DETECTED;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.CLASSIFIER_ERROR;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.CLASSIFIER_ERROR_BLOCKED;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.INTERCEPTING_REQUEST;
+import static com.nomaddeveloper.securai.internal.model.SecuraiMessages.SECURITY_THREAT_DETECTED_BLOCKED;
 
 import androidx.annotation.NonNull;
 
@@ -32,6 +32,7 @@ public class SecuraiInterceptor implements Interceptor {
     private final XSSClassifierHelper xssClassifierHelper;
     private final DeniedResponse deniedResponse;
     private final boolean failClosed;
+    private final SecuraiLogger logger;
 
     /**
      * Constructs a new {@code SecuraiInterceptor} using the provided {@link SecuraiInterceptorBuilder}.
@@ -42,8 +43,8 @@ public class SecuraiInterceptor implements Interceptor {
      *                Must not be null.
      */
     SecuraiInterceptor(@NonNull final SecuraiInterceptorBuilder builder) {
-        SecuraiLogger.setLoggingEnabled(builder.isLoggingEnabled());
-        this.xssClassifierHelper = new XSSClassifierHelper(builder.getContext(), builder.getThreshold());
+        this.logger = new SecuraiLogger(builder.isLoggingEnabled());
+        this.xssClassifierHelper = new XSSClassifierHelper(builder.getContext(), builder.getThreshold(), logger);
         this.deniedResponse = builder.getDeniedResponse();
         this.failClosed = builder.isFailClosed();
     }
@@ -53,7 +54,7 @@ public class SecuraiInterceptor implements Interceptor {
     public Response intercept(@NonNull final Chain chain) throws IOException {
         final Request request = chain.request();
 
-        SecuraiLogger.debug(TAG, INTERCEPTING_REQUEST.getMessage() + request.url());
+        logger.debug(TAG, INTERCEPTING_REQUEST + request.url());
 
         final Invocation invocation = request.tag(Invocation.class);
         if (invocation == null) {
@@ -65,19 +66,19 @@ public class SecuraiInterceptor implements Interceptor {
             return chain.proceed(request);
         }
 
-        final SecuraiResult result = xssClassifierHelper.classify(extractFieldValues(request, extractFields(secured)));
+        final SecuraiResult result = xssClassifierHelper.classify(extractFieldValues(request, extractFields(secured, logger), logger));
 
         if (result.threatDetected()) {
-            SecuraiLogger.error(TAG, SECURITY_THREAT_DETECTED.getMessage() + request.url());
+            logger.error(TAG, SECURITY_THREAT_DETECTED_BLOCKED + request.url());
             return deniedResponse.onSecurityViolation(request, result.value());
         }
 
         if (result.hasError()) {
             if (failClosed) {
-                SecuraiLogger.error(TAG, CLASSIFIER_ERROR_BLOCKED.getMessage() + request.url());
+                logger.error(TAG, CLASSIFIER_ERROR_BLOCKED + request.url());
                 return deniedResponse.onSecurityViolation(request, result.value());
             }
-            SecuraiLogger.warn(TAG, CLASSIFIER_ERROR.getMessage() + request.url());
+            logger.warn(TAG, CLASSIFIER_ERROR + request.url());
         }
 
         return chain.proceed(request);
